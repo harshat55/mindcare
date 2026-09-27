@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Journal — MindCare</title>
+    <meta name="description" content="A calm, dignified photo journal preserving precious memories, people, places, and life stories for dementia support.">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/translations.js"></script>
+    <script>
+        if (localStorage.getItem('mindcare_logged_in') !== 'true') {
+            window.location.replace('login.html');
+        }
+    </script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" role="navigation" aria-label="Memory Navigation">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo" aria-label="MindCare Home">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px; color: var(--brand-forest);">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="7" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                </svg>
+                <div class="brand-logo-text">
+                    <span class="brand-name" data-i18n="brand.name">MindCare</span>
+                    <span class="brand-tagline" data-i18n="brand.tagline">Every memory matters.</span>
+                </div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="memory.html" class="nav-link active" data-i18n="nav.memory">Memory Journal</a></li>
+                <li><a href="companion.html" class="nav-link" data-i18n="nav.companion">Companion</a></li>
+                <li><a href="routine.html" class="nav-link" data-i18n="nav.routine">Daily Routine</a></li>
+                <li><a href="caregiver.html" class="nav-link" data-i18n="nav.caregiver">Caregiver Portal</a></li>
+            </ul>
+
+            <div class="nav-actions" style="display: flex; align-items: center; gap: var(--space-xs);">
+                <!-- Multilingual Selector -->
+                <div class="lang-switcher-wrap">
+                    <select class="lang-select" aria-label="Select Language" data-lang-switcher>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="as">অসমীয়া (Assamese)</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-icon theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <button type="button" class="btn btn-primary nav-btn-assessment" data-modal-target="addMemoryModal">
+                    + Add Memory
+                </button>
+                <button type="button" class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu" aria-expanded="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="localStorage.clear(); window.location.replace('login.html');" title="Sign out" data-i18n="nav.logout">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div class="mobile-drawer" id="mobileDrawer">
+            <ul class="mobile-nav-list">
+                <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+                <li><a href="memory.html" class="mobile-nav-link">Memory Journal</a></li>
+                <li><a href="companion.html" class="mobile-nav-link">Companion</a></li>
+                <li><a href="routine.html" class="mobile-nav-link">Daily Routine</a></li>
+                <li><a href="caregiver.html" class="mobile-nav-link">Caregiver Portal</a></li>
+                <li><a href="assessment.html" class="mobile-nav-link">Cognitive Check</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- MEMORY JOURNAL CONTENT (APPLE PHOTOS + JOURNAL STYLE) -->
+    <main class="container" style="padding: var(--space-3xl) var(--space-lg);">
+        
+        <!-- Header Banner -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-2xl); flex-wrap: wrap; gap: var(--space-md);">
+            <div>
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">Journal</span>
+                <h1 class="serif-heading" style="font-size: 2.2rem; margin-top: 2px;">
+                    Memory Journal
+                </h1>
+                <p class="text-secondary" style="font-size: 1rem; max-width: 540px;">
+                    A visual photo album of cherished family milestones, special places, and life stories. Tap any memory to view details.
+                </p>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-lg" data-modal-target="addMemoryModal">
+                + Add Memory
+            </button>
+        </div>
+
+        <!-- Filter Segmented Tabs (Apple Style) -->
+        <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-2xl); flex-wrap: wrap;">
+            <button type="button" class="btn btn-sm btn-secondary filter-mem-btn active" data-cat="all">All Memories</button>
+            <button type="button" class="btn btn-sm btn-secondary filter-mem-btn" data-cat="Family">Family</button>
+            <button type="button" class="btn btn-sm btn-secondary filter-mem-btn" data-cat="Important Places">Important Places</button>
+            <button type="button" class="btn btn-sm btn-secondary filter-mem-btn" data-cat="Special Moments">Special Moments</button>
+        </div>
+
+        <!-- MEMORY CARDS GRID -->
+        <div class="memory-grid" id="memoryCardsGrid">
+            <!-- Rendered dynamically by JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- MODAL: ADD NEW MEMORY (APPLE SHEET STYLE) -->
+    <div class="modal-backdrop" id="addMemoryModal" role="dialog" aria-modal="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 style="font-size: 1.15rem; font-weight: 600;">Preserve a Memory</h3>
+                <button type="button" class="btn-icon" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <form id="addMemoryForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="memTitle">Title</label>
+                        <input type="text" id="memTitle" class="form-input" placeholder="e.g., Summer Fishing Trip" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                        <div class="form-group">
+                            <label class="form-label" for="memCategory">Category</label>
+                            <select id="memCategory" class="form-select">
+                                <option value="Family">Family</option>
+                                <option value="Important Places">Important Places</option>
+                                <option value="Special Moments">Special Moments</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="memDate">Date or Year</label>
+                            <input type="text" id="memDate" class="form-input" placeholder="e.g., July 2021">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="memPerson">People or Location</label>
+                        <input type="text" id="memPerson" class="form-input" placeholder="e.g., Maya and Arthur at Lake Tahoe">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="memImage">Photo</label>
+                        <select id="memImage" class="form-select">
+                            <option value="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80">Family Gathering</option>
+                            <option value="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80">Mountain Lake Sunset</option>
+                            <option value="https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=600&q=80">Celebration & Joy</option>
+                            <option value="https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=600&q=80">Sunny Meadow</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="memDesc">Story</label>
+                        <textarea id="memDesc" class="form-textarea" rows="3" placeholder="What made this day memorable..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Memory</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: VIEW MEMORY DETAILS & NARRATION (APPLE SHEET MODAL) -->
+    <div class="modal-backdrop" id="viewMemoryModal" role="dialog" aria-modal="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="detailMemTitle" style="font-size: 1.15rem; font-weight: 600;">Memory Title</h3>
+                <button type="button" class="btn-icon" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <img id="detailMemImg" src="" alt="Memory Image" style="width: 100%; height: 240px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
+                    <span id="detailMemCategory" class="badge badge-secondary">Family</span>
+                    <span id="detailMemDate" style="font-size: 0.82rem; font-weight: 500; color: var(--text-muted);">June 2022</span>
+                </div>
+
+                <div id="detailMemPerson" style="font-size: 0.9rem; font-weight: 600; color: var(--brand-primary); margin-bottom: var(--space-sm);">
+                    People: Maya & Arthur
+                </div>
+
+                <p id="detailMemDesc" style="font-size: 0.98rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: var(--space-lg);">
+                    Description of the story.
+                </p>
+
+                <div style="background: var(--bg-primary); padding: var(--space-md); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <strong style="font-size: 0.9rem; display: block;">Spoken Narration</strong>
+                        <small class="text-muted">Listen to a gentle reading</small>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" id="playMemoryAudioBtn">
+                        🔊 Read Aloud
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" data-close-modal>Close</button>
+                <a href="companion.html" class="btn btn-secondary btn-sm">Talk with Companion →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLOATING ACCESSIBILITY TRIGGER & PANEL -->
+    <button type="button" class="a11y-widget-trigger" id="a11yTrigger" aria-label="Open Accessibility Menu" aria-expanded="false" title="Accessibility Settings">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="4" r="2"></circle>
+            <path d="M19 13v-2a7 7 0 0 0-14 0v2"></path>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <line x1="8" y1="16" x2="16" y2="16"></line>
+        </svg>
+    </button>
+
+    <div class="a11y-panel" id="a11yPanel" role="dialog" aria-label="Accessibility Options">
+        <div class="a11y-header">
+            <h3 style="font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <span>♿</span> Accessibility Settings
+            </h3>
+            <button type="button" class="btn-icon" id="a11yCloseBtn" aria-label="Close Accessibility Panel" style="width: 28px; height: 28px;">✕</button>
+        </div>
+
+        <div class="a11y-group">
+            <span class="a11y-group-label">Text Size</span>
+            <div class="a11y-btn-group">
+                <button type="button" class="a11y-toggle-btn active" data-font-size="normal">Default</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="large">Large</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="xlarge">X-Large</button>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">High Contrast</strong>
+                    <small class="text-muted">Maximum text clarity</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="contrastToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">Reduce Motion</strong>
+                    <small class="text-muted">Minimize transitions</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="motionToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="a11yResetBtn" style="width: 100%; margin-top: var(--space-xs);">
+            Reset to Defaults
+        </button>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/socket-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const name = localStorage.getItem('mindcare_user_name') || 'Patient';
+            if (window.MindCareSocket) {
+                MindCareSocket.init({ role: 'patient', name });
+            }
+            initMemoryPage();
+        });
+
+        window.addEventListener('mindcare:synced', (e) => {
+            if (e.detail && e.detail.type === 'memories') {
+                renderMemoryCards();
+            }
+        });
+
+        let activeMemoryFilter = 'all';
+        let currentActiveMemory = null;
+
+        async function initMemoryPage() {
+            renderMemoryCards();
+            setupFilterTabs();
+            setupAddMemoryForm();
+
+            // Fetch live memories from backend GET /api/memories
+            if (window.MindCareAPI && typeof window.MindCareAPI.fetchMemories === 'function') {
+                try {
+                    const serverMemories = await window.MindCareAPI.fetchMemories();
+                    if (Array.isArray(serverMemories) && serverMemories.length > 0) {
+                        window.MindCareStorage.saveMemories(serverMemories);
+                        renderMemoryCards();
+                    }
+                } catch (err) {
+                    console.warn('[Memory] Live memories fetch notice:', err.message);
+                }
+            }
+
+            // Setup speech button
+            const speechBtn = document.getElementById('playMemoryAudioBtn');
+            if (speechBtn) {
+                speechBtn.addEventListener('click', () => {
+                    if (currentActiveMemory && 'speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const textToRead = `${currentActiveMemory.title}. ${currentActiveMemory.description}`;
+                        const u = new SpeechSynthesisUtterance(textToRead);
+                        u.rate = 0.9;
+                        window.speechSynthesis.speak(u);
+                        if (window.showToast) window.showToast('Reading memory aloud...', 'info');
+                    } else {
+                        if (window.showToast) window.showToast('Speech synthesis not available in this browser', 'warning');
+                    }
+                });
+            }
+        }
+
+        function renderMemoryCards() {
+            const grid = document.getElementById('memoryCardsGrid');
+            if (!grid || !window.MindCareStorage) return;
+
+            let memories = window.MindCareStorage.getMemories();
+
+            if (activeMemoryFilter !== 'all') {
+                memories = memories.filter(m => m.category === activeMemoryFilter);
+            }
+
+            if (!memories.length) {
+                grid.innerHTML = `
+                    <div class="card" style="grid-column: 1 / -1; text-align: center; padding: var(--space-3xl);">
+                        <p class="text-muted">No memories found in this category.</p>
+                        <button type="button" class="btn btn-secondary btn-sm" data-modal-target="addMemoryModal" style="margin-top: var(--space-md);">
+                            + Add a Memory
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = memories.map(mem => `
+                <div class="memory-card" data-memory-id="${mem.id}">
+                    <div class="memory-card-img-wrap">
+                        <img src="${mem.image}" alt="${mem.title}" class="memory-card-img">
+                    </div>
+                    <div class="memory-card-body">
+                        <div>
+                            <span class="memory-date-tag">${mem.category} • ${mem.date || ''}</span>
+                            <h3 class="memory-card-title">${mem.title}</h3>
+                            <p class="memory-card-desc">${mem.description}</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-md); padding-top: var(--space-sm); border-top: 1px solid var(--border-subtle);">
+                            <span style="font-size: 0.78rem; font-weight: 500; color: var(--text-muted);">${mem.person || ''}</span>
+                            <span class="btn btn-secondary btn-sm" style="font-size: 0.78rem; padding: 2px 10px; min-height: 28px;">View Story →</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Attach card click listeners to open view detail modal
+            document.querySelectorAll('.memory-card[data-memory-id]').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.getAttribute('data-memory-id');
+                    const allMemories = window.MindCareStorage.getMemories();
+                    const target = allMemories.find(m => String(m.id) === String(id));
+                    if (target) {
+                        openMemoryDetail(target);
+                    }
+                });
+            });
+        }
+
+        function openMemoryDetail(mem) {
+            currentActiveMemory = mem;
+            document.getElementById('detailMemTitle').textContent = mem.title;
+            document.getElementById('detailMemImg').src = mem.image;
+            document.getElementById('detailMemCategory').textContent = mem.category;
+            document.getElementById('detailMemDate').textContent = mem.date || '';
+            document.getElementById('detailMemPerson').textContent = mem.person ? `With: ${mem.person}` : '';
+            document.getElementById('detailMemDesc').textContent = mem.description;
+
+            window.openModal('viewMemoryModal');
+        }
+
+        function setupFilterTabs() {
+            document.querySelectorAll('.filter-mem-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-mem-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeMemoryFilter = btn.getAttribute('data-cat');
+                    renderMemoryCards();
+                });
+            });
+        }
+
+        function setupAddMemoryForm() {
+            const form = document.getElementById('addMemoryForm');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('memTitle').value.trim();
+                const category = document.getElementById('memCategory').value;
+                const date = document.getElementById('memDate').value.trim() || 'Recently Added';
+                const person = document.getElementById('memPerson').value.trim();
+                const image = document.getElementById('memImage').value;
+                const description = document.getElementById('memDesc').value.trim();
+
+                if (!title || !description) return;
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Preserving...';
+                }
+
+                try {
+                    if (window.MindCareAPI && typeof window.MindCareAPI.createMemory === 'function') {
+                        const newServerMem = await window.MindCareAPI.createMemory({
+                            title, category, date, person, image, description
+                        });
+                        if (newServerMem) {
+                            const memories = window.MindCareStorage.getMemories();
+                            if (!memories.find(m => m.id === newServerMem.id)) {
+                                memories.unshift(newServerMem);
+                                window.MindCareStorage.saveMemories(memories);
+                            }
+                        }
+                    } else {
+                        window.MindCareStorage.addMemory({
+                            title, category, date, person, image, description
+                        });
+                    }
+
+                    if (window.showToast) {
+                        window.showToast(`Memory "${title}" preserved in journal`, 'success');
+                    }
+
+                    // Socket.io Real-time Patient Event
+                    if (window.MindCareSocket) {
+                        const patientName = localStorage.getItem('mindcare_user_name') || 'Patient';
+                        window.MindCareSocket.emitEvent({
+                            type: 'memory_added',
+                            title: '🖼️ New Family Memory Preserved',
+                            message: `${patientName} added story: "${title}" (${category})`,
+                            category: 'info',
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            data: { title, category, date, person }
+                        });
+                    }
+                } catch (err) {
+                    console.warn('[Memory Add] Backend create notice:', err.message);
+                    window.MindCareStorage.addMemory({
+                        title, category, date, person, image, description
+                    });
+                    if (window.showToast) {
+                        window.showToast(`Memory "${title}" saved locally`, 'info');
+                    }
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Save Memory';
+                    }
+                    form.reset();
+                    window.closeModal('addMemoryModal');
+                    renderMemoryCards();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

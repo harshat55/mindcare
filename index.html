@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare — Every memory matters.</title>
+    <meta name="description" content="A gentle, warm platform for people living with memory loss, their caregivers, and the families who love them.">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/translations.js"></script>
+    <script>
+        // Auth Guard — redirect unauthenticated users to login
+        (function() {
+            const loggedIn = localStorage.getItem('mindcare_logged_in');
+            const role = localStorage.getItem('mindcare_role');
+            if (loggedIn !== 'true') {
+                window.location.replace('login.html');
+            } else if (role === 'patient') {
+                window.location.replace('companion.html');
+            } else if (role === 'caregiver') {
+                window.location.replace('caregiver.html');
+            }
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- FLOATING MINIMAL NAVIGATION -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main Navigation">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo" aria-label="MindCare Home">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px; color: var(--brand-forest);">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="7" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                </svg>
+                <div class="brand-logo-text">
+                    <span class="brand-name" data-i18n="brand.name">MindCare</span>
+                    <span class="brand-tagline" data-i18n="brand.tagline">Every memory matters.</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li><a href="#experience" class="nav-link">Experience</a></li>
+                <li><a href="#memory-orbit" class="nav-link">The Orbit</a></li>
+                <li><a href="#scroll-story" class="nav-link">A Day with MindCare</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="caregiver.html" class="nav-link" data-i18n="nav.caregiver">For Caregivers</a></li>
+            </ul>
+
+            <div class="nav-actions" style="display: flex; align-items: center; gap: var(--space-xs);">
+                <!-- Multilingual Selector -->
+                <div class="lang-switcher-wrap">
+                    <select class="lang-select" aria-label="Select Language" data-lang-switcher>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="as">অসমীয়া (Assamese)</option>
+                    </select>
+                </div>
+                <!-- Theme Toggle (Night Garden) -->
+                <button type="button" class="btn-icon theme-toggle-btn" aria-label="Toggle Night Garden theme" title="Toggle theme">
+                    <svg class="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+
+                <!-- Accessibility Button -->
+                <button type="button" class="btn-icon" onclick="document.getElementById('a11yTrigger').click()" aria-label="Accessibility Options" title="Accessibility Settings">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="4" r="2"></circle>
+                        <path d="M19 13v-2a7 7 0 0 0-14 0v2"></path>
+                        <line x1="12" y1="12" x2="12" y2="21"></line>
+                        <line x1="8" y1="16" x2="16" y2="16"></line>
+                    </svg>
+                </button>
+
+                <!-- Primary Action -->
+                <a href="assessment.html" class="btn btn-primary nav-btn-assessment">
+                    Start MindCare
+                </a>
+
+                <!-- Mobile Hamburger Button -->
+                <button type="button" class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu" aria-expanded="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div class="mobile-drawer" id="mobileDrawer">
+            <ul class="mobile-nav-list">
+                <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+                <li><a href="#experience" class="mobile-nav-link">Experience</a></li>
+                <li><a href="#memory-orbit" class="mobile-nav-link">The Orbit</a></li>
+                <li><a href="#scroll-story" class="mobile-nav-link">A Day with MindCare</a></li>
+                <li><a href="#features" class="mobile-nav-link">Platform Features</a></li>
+                <li><a href="assessment.html" class="mobile-nav-link">Cognitive Check</a></li>
+                <li><a href="routine.html" class="mobile-nav-link">Daily Routine</a></li>
+                <li><a href="companion.html" class="mobile-nav-link">AI Memory Companion</a></li>
+                <li><a href="memory.html" class="mobile-nav-link">Memory Journal</a></li>
+                <li><a href="caregiver.html" class="mobile-nav-link">Caregiver Portal</a></li>
+            </ul>
+            <div style="display: flex; gap: var(--space-sm); flex-direction: column; margin-top: var(--space-md);">
+                <a href="assessment.html" class="btn btn-primary" style="width: 100%;">Start MindCare</a>
+                <button type="button" class="btn btn-secondary theme-toggle-btn" style="width: 100%;">
+                    Toggle Night Garden
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION: THE MEMORY GARDEN -->
+    <header class="hero-section" id="experience">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="hero-pill">
+                    <span class="hero-pill-dot"></span>
+                    <span>THE MEMORY GARDEN</span>
+                </div>
+                <h1 class="display-title hero-title">
+                    Every memory matters.
+                </h1>
+                <p class="hero-desc">
+                    A gentle, dignified companion for people living with memory loss, their caregivers, and the families who love them.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="assessment.html" class="btn btn-primary btn-lg">
+                        Begin Your Journey →
+                    </a>
+                    <a href="#memory-orbit" class="btn btn-secondary btn-lg">
+                        Explore MindCare
+                    </a>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.84rem; color: var(--text-muted); margin-top: var(--space-xs);">
+                    <span style="color: var(--brand-forest); font-size: 1rem;">🌿</span>
+                    <span>Non-stigmatizing, private, and designed for human connection.</span>
+                </div>
+            </div>
+
+            <!-- FLOATING PHYSICAL MEMORY VISUAL -->
+            <div class="hero-visual-wrap">
+                <div class="memory-garden-canvas">
+                    <div class="garden-sunbeam"></div>
+
+                    <!-- Card 1: Keepsake Photo -->
+                    <div class="floating-memory-item float-photo">
+                        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=400&q=80" alt="Family Photo">
+                        <div class="float-photo-caption">Grandma's 75th Birthday</div>
+                    </div>
+
+                    <!-- Card 2: Morning Medicine Routine -->
+                    <div class="floating-memory-item float-meds">
+                        <span style="font-size: 1.2rem;">💊</span>
+                        <div>
+                            <strong style="font-size: 0.85rem; display: block; color: var(--text-primary);">Morning Medicine</strong>
+                            <small style="color: var(--status-success); font-weight: 600;">8:00 AM • Taken</small>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Cognitive Recall Card -->
+                    <div class="floating-memory-item float-cognitive">
+                        <span style="font-size: 1.2rem;">🧠</span>
+                        <div>
+                            <strong style="font-size: 0.85rem; display: block; color: var(--text-primary);">Morning Focus</strong>
+                            <small style="color: var(--brand-forest); font-weight: 600;">96% Recall Activity</small>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Safe Zone Beacon -->
+                    <div class="floating-memory-item float-safety">
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--status-success);"></span>
+                        <div>
+                            <strong style="font-size: 0.85rem; display: block; color: var(--text-primary);">Home Safe Zone</strong>
+                            <small style="color: var(--text-secondary);">Perimeter All Clear</small>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Loved One Audio Note -->
+                    <div class="floating-memory-item float-companion-voice">
+                        <span style="font-size: 1.1rem;">❤️</span>
+                        <div>
+                            <strong style="font-size: 0.82rem; display: block;">Maya's Voice Note</strong>
+                            <small style="color: var(--text-secondary);">"Thinking of you, Grandpa!"</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SIGNATURE FEATURE 1: THE MEMORY ORBIT -->
+    <section class="orbit-section" id="memory-orbit">
+        <div class="container text-center">
+            <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Interactive Architecture</div>
+            <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                The MindCare Orbit
+            </h2>
+            <p class="lead-text" style="max-width: 680px; margin: 0 auto;">
+                Five interconnected pillars creating a continuous circle of comfort, memory preservation, and caregiver reassurance. Hover or tap any node to explore.
+            </p>
+
+            <div class="orbit-container">
+                <!-- Circular Guide Ring -->
+                <div class="orbit-ring"></div>
+
+                <!-- Center Interactive Core -->
+                <div class="orbit-center-core" id="orbitCenterCore">
+                    <div class="orbit-core-logo" id="orbitCoreTitle">❤️ Memory</div>
+                    <p class="orbit-core-message" id="orbitCoreText">
+                        Keep important people and moments close. Cherished photos and spoken stories preserved forever.
+                    </p>
+                    <a href="memory.html" id="orbitCoreLink" class="btn btn-sm btn-primary" style="margin-top: 10px;">
+                        Open Memory Journal →
+                    </a>
+                </div>
+
+                <!-- Orbit Node 1: Memory -->
+                <div class="orbit-node orbit-node-1 active" data-orbit="memory" role="button" tabindex="0" aria-label="Pillar: Memory">
+                    <span class="node-icon">❤️</span>
+                    <span class="node-label">Memory</span>
+                </div>
+
+                <!-- Orbit Node 2: Routine -->
+                <div class="orbit-node orbit-node-2" data-orbit="routine" role="button" tabindex="0" aria-label="Pillar: Routine">
+                    <span class="node-icon">⏰</span>
+                    <span class="node-label">Routine</span>
+                </div>
+
+                <!-- Orbit Node 3: Cognitive -->
+                <div class="orbit-node orbit-node-3" data-orbit="cognitive" role="button" tabindex="0" aria-label="Pillar: Cognitive">
+                    <span class="node-icon">🧠</span>
+                    <span class="node-label">Cognitive</span>
+                </div>
+
+                <!-- Orbit Node 4: Family -->
+                <div class="orbit-node orbit-node-4" data-orbit="family" role="button" tabindex="0" aria-label="Pillar: Family">
+                    <span class="node-icon">🤝</span>
+                    <span class="node-label">Family</span>
+                </div>
+
+                <!-- Orbit Node 5: Safety -->
+                <div class="orbit-node orbit-node-5" data-orbit="safety" role="button" tabindex="0" aria-label="Pillar: Safety">
+                    <span class="node-icon">🛡️</span>
+                    <span class="node-label">Safety</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIGNATURE FEATURE 2: "A DAY WITH MINDCARE" (SCROLL STORY) -->
+    <section class="story-section" id="scroll-story">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: var(--space-2xl);">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Day in the Life</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    A Day with MindCare
+                </h2>
+                <p class="lead-text" style="max-width: 640px; margin: 0 auto;">
+                    How gentle rhythms replace anxiety from the first morning sunlight to peaceful evening rest.
+                </p>
+            </div>
+
+            <!-- Timeline Time Tabs -->
+            <div class="story-timeline-nav">
+                <button type="button" class="story-time-tab active" data-story-period="morning">
+                    <span>🌅 Morning</span>
+                    <small>07:30 AM</small>
+                </button>
+                <button type="button" class="story-time-tab" data-story-period="midday">
+                    <span>☀️ Midday</span>
+                    <small>12:30 PM</small>
+                </button>
+                <button type="button" class="story-time-tab" data-story-period="evening">
+                    <span>🌇 Evening</span>
+                    <small>04:00 PM</small>
+                </button>
+                <button type="button" class="story-time-tab" data-story-period="night">
+                    <span>🌙 Night</span>
+                    <small>08:00 PM</small>
+                </button>
+            </div>
+
+            <!-- Interactive Story Stage Card -->
+            <div class="story-card-grid">
+                <div>
+                    <span class="task-time-badge" id="storyTimeBadge" style="margin-bottom: var(--space-md); display: inline-block;">
+                        Morning • 07:30 AM
+                    </span>
+                    <h3 class="serif-heading" id="storyHeading" style="font-size: 2.2rem; margin-bottom: var(--space-md);">
+                        Start the day gently.
+                    </h3>
+                    <p class="story-quote" id="storyQuote" style="font-family: var(--font-serif); font-size: 1.25rem; font-style: italic; color: var(--brand-forest); line-height: 1.5; margin-bottom: var(--space-xl);">
+                        "No rushing. Morning sunlight, a glass of water, and today's first reminders presented with calm simplicity."
+                    </p>
+                    <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                        <a href="routine.html" class="btn btn-primary">Open Daily Routine</a>
+                        <a href="assessment.html" class="btn btn-secondary">Try Morning Check</a>
+                    </div>
+                </div>
+
+                <div id="storyItemsList" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                    <!-- Dynamically populated by main.js initScrollStory() -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIGNATURE FEATURE 3: THE "WOW" DEMO TOUR (30-SECOND GUIDED HACKATHON DEMO) -->
+    <section class="demo-section" id="guided-demo">
+        <div class="container" style="max-width: 960px;">
+            <div class="text-center" style="margin-bottom: var(--space-2xl);">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Hackathon Showcase</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    The 30-Second Experience Tour
+                </h2>
+                <p class="lead-text" style="max-width: 640px; margin: 0 auto;">
+                    Click <strong>Run Demo ▶</strong> to see how MindCare coordinates patient prompts, cognitive check-ins, and caregiver peace of mind in continuous real time.
+                </p>
+            </div>
+
+            <div class="demo-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); flex-wrap: wrap; gap: var(--space-md);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--brand-amber);"></span>
+                        <strong style="font-size: 0.95rem;">Interactive Live Simulation</strong>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="runDemoBtn">
+                        Run Demo ▶
+                    </button>
+                </div>
+
+                <!-- Stepper Pills -->
+                <div class="demo-stepper-bar" id="demoStepperPills">
+                    <!-- Populated by initGuidedDemo() in main.js -->
+                </div>
+
+                <!-- Dynamic Screen Stage -->
+                <div class="demo-stage-screen" id="demoStageScreen">
+                    <!-- Populated by initGuidedDemo() in main.js -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE HUMAN PROBLEM (THREE AUTHENTIC VOICES) -->
+    <section class="problem-section" id="problem">
+        <div class="container">
+            <div class="text-center" style="max-width: 760px; margin: 0 auto var(--space-3xl) auto;">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Empathy First</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    When memory fades,<br>dignity must remain.
+                </h2>
+                <p class="lead-text">
+                    Dementia affects routines, spatial confidence, and independence. Here are the real voices MindCare was built to support.
+                </p>
+            </div>
+
+            <div class="problem-voices-grid">
+                <!-- Voice 1: Arthur -->
+                <div class="voice-card problem-card" tabindex="0" role="button" aria-expanded="false">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: var(--space-md);">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--brand-forest-light); color: var(--brand-forest); display: flex; align-items: center; justify-content: center; font-weight: 700;">AM</div>
+                            <div>
+                                <strong style="font-size: 0.95rem; display: block; color: var(--text-primary);">Arthur, 78</strong>
+                                <small style="color: var(--text-muted);">Living with memory changes</small>
+                            </div>
+                        </div>
+                        <blockquote class="voice-quote">
+                            "I forgot my medicine twice this week. I don't want my daughter to worry."
+                        </blockquote>
+                    </div>
+                    <div class="voice-solution">
+                        <strong>How MindCare Helps:</strong> Large-type visual reminders with audio confirmation ensure medications are taken on time without embarrassment or confusion.
+                    </div>
+                </div>
+
+                <!-- Voice 2: Maya -->
+                <div class="voice-card problem-card" tabindex="0" role="button" aria-expanded="false">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: var(--space-md);">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--brand-amber-soft); color: var(--brand-amber); display: flex; align-items: center; justify-content: center; font-weight: 700;">MC</div>
+                            <div>
+                                <strong style="font-size: 0.95rem; display: block; color: var(--text-primary);">Maya, 44</strong>
+                                <small style="color: var(--text-muted);">Daughter & Primary Caregiver</small>
+                            </div>
+                        </div>
+                        <blockquote class="voice-quote">
+                            "I work full-time while caring for my dad. I just need to know he's safe without calling every hour."
+                        </blockquote>
+                    </div>
+                    <div class="voice-solution">
+                        <strong>How MindCare Helps:</strong> Ambient safe-zone telemetry and live routine checkoffs give instant reassurance without intrusive surveillance.
+                    </div>
+                </div>
+
+                <!-- Voice 3: Eleanor -->
+                <div class="voice-card problem-card" tabindex="0" role="button" aria-expanded="false">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: var(--space-md);">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--status-info-bg); color: var(--brand-teal); display: flex; align-items: center; justify-content: center; font-weight: 700;">EW</div>
+                            <div>
+                                <strong style="font-size: 0.95rem; display: block; color: var(--text-primary);">Eleanor, 81</strong>
+                                <small style="color: var(--text-muted);">Retired Teacher</small>
+                            </div>
+                        </div>
+                        <blockquote class="voice-quote">
+                            "Sometimes I wake up and I'm not sure which day it is. The photos help me remember."
+                        </blockquote>
+                    </div>
+                    <div class="voice-solution">
+                        <strong>How MindCare Helps:</strong> The Memory Journal anchors each day in familiar faces, spoken family audio, and loved moments that bring comfort and orientation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE FEATURES SECTION (5 LARGE TILES) -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="text-center" style="max-width: 720px; margin: 0 auto var(--space-3xl) auto;">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Five Pillars of Care</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    One calm space for everyday support.
+                </h2>
+                <p class="lead-text">
+                    Purpose-built tools designed to support patients throughout their day while keeping families closely in touch.
+                </p>
+            </div>
+
+            <div class="tiles-grid">
+                <!-- Tile 1: Cognitive Check -->
+                <div class="tile-card">
+                    <div>
+                        <div class="tile-icon" style="color: var(--brand-forest);">🧠</div>
+                        <h3 class="tile-title">Cognitive Activities</h3>
+                        <p class="tile-desc">
+                            Gentle, encouraging activities for attention, reaction, and memory recall. Designed for personal awareness, not clinical grading.
+                        </p>
+                    </div>
+                    <a href="assessment.html" class="btn btn-secondary">Try an Activity →</a>
+                </div>
+
+                <!-- Tile 2: AI Memory Companion -->
+                <div class="tile-card">
+                    <div>
+                        <div class="tile-icon" style="color: var(--brand-amber);">💬</div>
+                        <h3 class="tile-title">Memory Companion</h3>
+                        <p class="tile-desc">
+                            A patient conversational partner who never gets frustrated. Answers routine questions, explains family photos, and offers soothing calm.
+                        </p>
+                    </div>
+                    <a href="companion.html" class="btn btn-secondary">Meet Companion →</a>
+                </div>
+
+                <!-- Tile 3: Daily Routine & Meds -->
+                <div class="tile-card">
+                    <div>
+                        <div class="tile-icon" style="color: var(--status-success);">💊</div>
+                        <h3 class="tile-title">Medication & Routine</h3>
+                        <p class="tile-desc">
+                            Visual step-by-step timelines for prescriptions, meals, garden walks, and bedtime wind-down with one-tap completion tracking.
+                        </p>
+                    </div>
+                    <a href="routine.html" class="btn btn-secondary">View Routine →</a>
+                </div>
+
+                <!-- Tile 4: Memory Journal -->
+                <div class="tile-card">
+                    <div>
+                        <div class="tile-icon" style="color: var(--brand-rose);">🖼️</div>
+                        <h3 class="tile-title">Memory Journal</h3>
+                        <p class="tile-desc">
+                            Cherished photographs, family milestone notes, and spoken voice recordings lovingly organized to anchor everyday orientation.
+                        </p>
+                    </div>
+                    <a href="memory.html" class="btn btn-secondary">Open Memories →</a>
+                </div>
+
+                <!-- Tile 5: Caregiver & Safety -->
+                <div class="tile-card">
+                    <div>
+                        <div class="tile-icon" style="color: var(--brand-teal);">🛡️</div>
+                        <h3 class="tile-title">Caregiver & Safety</h3>
+                        <p class="tile-desc">
+                            Live telemetry of routine adherence, safe-zone location status, emergency quick-dial, and shared family notes without intrusion.
+                        </p>
+                    </div>
+                    <a href="caregiver.html" class="btn btn-secondary">Caregiver Portal →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE COGNITIVE MINI-CHECK (LANDING PREVIEW) -->
+    <section class="section" id="cognitive-mini-check" style="background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); padding: var(--space-4xl) 0;">
+        <div class="container">
+            <div class="text-center" style="max-width: 720px; margin: 0 auto var(--space-2xl) auto;">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Interactive Demonstration</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    A Gentle Moment for Your Mind
+                </h2>
+                <p class="lead-text">
+                    Experience how MindCare engages memory with zero pressure. Try this 4-object recall challenge right here.
+                </p>
+            </div>
+
+            <div class="cognitive-preview-box">
+                <!-- Phase 1: Study Objects -->
+                <div id="miniStudyPhase">
+                    <p style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: var(--space-lg); font-weight: 500;">
+                        Take a calm breath and remember these 4 everyday objects:
+                    </p>
+                    <div class="recall-items-row">
+                        <div class="recall-tile-btn">
+                            <span style="font-size: 2.2rem;">🔑</span>
+                            <span>Key</span>
+                        </div>
+                        <div class="recall-tile-btn">
+                            <span style="font-size: 2.2rem;">🍎</span>
+                            <span>Apple</span>
+                        </div>
+                        <div class="recall-tile-btn">
+                            <span style="font-size: 2.2rem;">📖</span>
+                            <span>Book</span>
+                        </div>
+                        <div class="recall-tile-btn">
+                            <span style="font-size: 2.2rem;">🌸</span>
+                            <span>Flower</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg" id="miniRecallStartBtn">
+                        I've Memorized Them → Start Recall
+                    </button>
+                </div>
+
+                <!-- Phase 2: Pick 4 from 8 -->
+                <div id="miniRecallPhase" style="display: none;">
+                    <p style="font-size: 1.05rem; color: var(--text-primary); margin-bottom: var(--space-md); font-weight: 500;">
+                        Which 4 objects were shown on the previous screen? Tap 4 to select:
+                    </p>
+                    <div class="recall-items-row">
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="cup">
+                            <span style="font-size: 2rem;">☕</span>
+                            <span>Cup</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="key">
+                            <span style="font-size: 2rem;">🔑</span>
+                            <span>Key</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="watch">
+                            <span style="font-size: 2rem;">⌚</span>
+                            <span>Watch</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="apple">
+                            <span style="font-size: 2rem;">🍎</span>
+                            <span>Apple</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="flower">
+                            <span style="font-size: 2rem;">🌸</span>
+                            <span>Flower</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="lamp">
+                            <span style="font-size: 2rem;">💡</span>
+                            <span>Lamp</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="book">
+                            <span style="font-size: 2rem;">📖</span>
+                            <span>Book</span>
+                        </button>
+                        <button type="button" class="recall-tile-btn mini-tile-choice" data-item-id="glasses">
+                            <span style="font-size: 2rem;">👓</span>
+                            <span>Glasses</span>
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg" id="miniCheckSubmitBtn">
+                        Verify My Recall
+                    </button>
+                </div>
+
+                <!-- Phase 3: Result -->
+                <div id="miniResultPhase" style="display: none; padding: var(--space-lg) 0;">
+                    <div style="font-size: 3rem; margin-bottom: var(--space-sm);">🌿</div>
+                    <h3 class="serif-heading" style="font-size: 1.8rem; margin-bottom: var(--space-xs); color: var(--brand-forest);">
+                        Wonderful focus! 4 out of 4 recalled.
+                    </h3>
+                    <p style="color: var(--text-secondary); max-width: 520px; margin: 0 auto var(--space-lg) auto;">
+                        Gentle object recall stimulates the hippocampus and promotes associative memory retention in a positive, calming manner.
+                    </p>
+                    <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+                        <a href="assessment.html" class="btn btn-primary">Take Full Cognitive Check →</a>
+                        <button type="button" class="btn btn-secondary" onclick="location.reload()">Try Again</button>
+                    </div>
+                </div>
+
+                <!-- Medical Notice -->
+                <div style="margin-top: var(--space-2xl); padding: var(--space-md); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); font-size: 0.84rem; color: var(--text-muted); text-align: left;">
+                    <strong>Medical Disclaimer:</strong> MindCare cognitive checks are designed for personal awareness and daily engagement only. They do NOT diagnose dementia, Alzheimer's, or any neurological condition. Always consult a licensed healthcare professional for clinical diagnoses.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CAREGIVER EXPERIENCE (SPLIT SCREEN) -->
+    <section class="section" id="caregiver-experience" style="background: var(--bg-primary); border-bottom: 1px solid var(--border-subtle); padding: var(--space-4xl) 0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-3xl); align-items: center;">
+                <div>
+                    <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Caregiver Portal</div>
+                    <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-md);">
+                        Peace of mind for the ones who care.
+                    </h2>
+                    <p class="lead-text" style="margin-bottom: var(--space-xl);">
+                        Caregiving is a journey of deep love, but often comes with relentless anxiety. MindCare gives you quiet, respectful transparency into your loved one's day.
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: var(--space-md); margin-bottom: var(--space-2xl);">
+                        <div style="display: flex; gap: var(--space-md); align-items: flex-start;">
+                            <div style="font-size: 1.3rem; color: var(--brand-forest); width: 32px; height: 32px; border-radius: 50%; background: var(--brand-forest-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">✓</div>
+                            <div>
+                                <strong style="color: var(--text-primary); font-size: 1rem;">No Interrogating Phone Calls</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 2px;">Check if medications were taken and meals enjoyed without making them feel supervised.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: var(--space-md); align-items: flex-start;">
+                            <div style="font-size: 1.3rem; color: var(--brand-amber); width: 32px; height: 32px; border-radius: 50%; background: var(--brand-amber-soft); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">🛡️</div>
+                            <div>
+                                <strong style="color: var(--text-primary); font-size: 1rem;">Dignified Safety Support</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 2px;">Subtle safe-zone perimeter telemetry alerts you only if wander assistance is required.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: var(--space-md); align-items: flex-start;">
+                            <div style="font-size: 1.3rem; color: var(--brand-teal); width: 32px; height: 32px; border-radius: 50%; background: var(--status-info-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📊</div>
+                            <div>
+                                <strong style="color: var(--text-primary); font-size: 1rem;">Doctor-Ready Wellness Summaries</strong>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 2px;">Export longitudinal routine and cognitive trends to share directly with physicians.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--space-md); flex-wrap: wrap;">
+                        <a href="caregiver.html" class="btn btn-primary btn-lg">Open Caregiver Dashboard</a>
+                        <a href="routine.html" class="btn btn-secondary btn-lg">View Shared Schedule</a>
+                    </div>
+                </div>
+
+                <!-- Live Simulated Telemetry Widget -->
+                <div class="card" style="border: 2px solid var(--border-medium); box-shadow: var(--shadow-lg); background: var(--bg-surface);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--border-subtle); padding-bottom: var(--space-sm);">
+                        <div>
+                            <h3 class="serif-heading" style="font-size: 1.2rem; margin: 0;">Arthur Miller • Daily Status</h3>
+                            <small style="color: var(--text-muted);">Synced 3 minutes ago • Home Device</small>
+                        </div>
+                        <span class="badge badge-success">● Connected</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                        <div style="background: var(--bg-card); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Medication Adherence</div>
+                            <div style="font-size: 1.6rem; font-weight: 700; color: var(--brand-forest); margin: 4px 0;">92%</div>
+                            <small style="color: var(--status-success);">✓ Morning dose verified</small>
+                        </div>
+
+                        <div style="background: var(--bg-card); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Cognitive Checks</div>
+                            <div style="font-size: 1.6rem; font-weight: 700; color: var(--brand-amber); margin: 4px 0;">3 / 3</div>
+                            <small style="color: var(--text-secondary);">Focus baseline steady</small>
+                        </div>
+
+                        <div style="background: var(--bg-card); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Daily Routines</div>
+                            <div style="font-size: 1.6rem; font-weight: 700; color: var(--brand-teal); margin: 4px 0;">5 / 8</div>
+                            <small style="color: var(--text-secondary);">Garden walk completed</small>
+                        </div>
+
+                        <div style="background: var(--bg-card); padding: var(--space-md); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Safe Perimeter</div>
+                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--status-success); margin: 6px 0;">● Safe Zone</div>
+                            <small style="color: var(--text-secondary);">In Home Backyard</small>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Next reminder: <strong>8:00 PM Evening Pill</strong></span>
+                        <a href="caregiver.html" class="btn btn-sm btn-secondary">Caregiver Portal →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MEMORY JOURNAL SHOWCASE + REAL-TIME LOCALSTORAGE CREATOR -->
+    <section class="section" id="memory-journal" style="background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); padding: var(--space-4xl) 0;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-3xl); flex-wrap: wrap; gap: var(--space-md);">
+                <div>
+                    <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Emotional Anchor</div>
+                    <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-xs);">
+                        Cherished Memories Stay Close.
+                    </h2>
+                    <p class="lead-text" style="max-width: 600px;">
+                        A photo journal designed for dignity. Click any story card to preview spoken voice narration or add a new memory immediately.
+                    </p>
+                </div>
+                <div style="display: flex; gap: var(--space-sm);">
+                    <button type="button" class="btn btn-primary" data-modal-target="addMemoryModal">
+                        + Add a Memory
+                    </button>
+                    <a href="memory.html" class="btn btn-secondary">
+                        Full Album →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Dynamic Memory Grid (populated by main.js initLandingMemoryForm) -->
+            <div class="memory-grid" id="landingMemoryGrid">
+                <!-- Memory cards loaded from LocalStorage -->
+            </div>
+        </div>
+    </section>
+
+    <!-- AI MEMORY COMPANION CONVERSATION SHOWCASE -->
+    <section class="section" id="companion-showcase" style="background: var(--bg-primary); border-bottom: 1px solid var(--border-subtle); padding: var(--space-4xl) 0;">
+        <div class="container" style="max-width: 880px;">
+            <div class="text-center" style="margin-bottom: var(--space-2xl);">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Conversational Comfort</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    Meet Your Memory Companion
+                </h2>
+                <p class="lead-text" style="max-width: 620px; margin: 0 auto;">
+                    Patient, friendly, and always present. Send a message or tap one of the suggested prompts below.
+                </p>
+            </div>
+
+            <div class="chat-interactive-box">
+                <div class="chat-header">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="status-dot-active"></span>
+                        <strong style="font-family: var(--font-serif); font-size: 1.1rem; color: var(--text-primary);">MindCare Companion</strong>
+                        <span class="badge badge-info" style="font-size: 0.7rem; padding: 2px 6px;">Empathetic Assistant</span>
+                    </div>
+                    <div style="display: flex; gap: var(--space-xs);">
+                        <button type="button" class="btn-icon voice-toggle-btn" title="Toggle Voice Output">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        </button>
+                        <button type="button" class="btn-icon clear-chat-btn" title="Clear Conversation">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prompt-chips">
+                    <button type="button" class="chip-btn" data-prompt="When should I take my evening medicine?">💊 When is my evening medicine?</button>
+                    <button type="button" class="chip-btn" data-prompt="Who is Maya?">❤️ Who is Maya?</button>
+                    <button type="button" class="chip-btn" data-prompt="What appointments do I have today?">📅 Any appointments today?</button>
+                    <button type="button" class="chip-btn" data-prompt="I feel a bit confused right now">🌿 I feel a bit confused</button>
+                </div>
+
+                <div class="chat-messages" id="landingChatMessages" style="height: 280px;">
+                    <div class="chat-bubble chat-bubble-assistant">
+                        <p>Good morning, Arthur! You have a video call with Maya today at 3:30 PM, and your morning blood pressure medication was checked off. How can I help you right now?</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-row">
+                    <input type="text" class="chat-input" placeholder="Ask MindCare anything (e.g. medicine, Maya, schedule)..." aria-label="Chat input">
+                    <button type="button" class="btn-icon mic-input-btn" title="Simulate Voice Input">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    </button>
+                    <button type="button" class="btn btn-primary chat-send-btn">
+                        Send
+                    </button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: var(--space-lg);">
+                <a href="companion.html" class="btn btn-secondary">
+                    Open Dedicated AI Companion Screen →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAFETY & PEACE OF MIND SECTION -->
+    <section class="section" id="safety-section" style="background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); padding: var(--space-4xl) 0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3xl); align-items: center;">
+                <div>
+                    <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Privacy & Safety</div>
+                    <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-md);">
+                        Discreet Protection, Never Surveillance.
+                    </h2>
+                    <p class="lead-text" style="margin-bottom: var(--space-lg);">
+                        We believe in safeguarding loved ones while fiercely preserving their dignity. MindCare uses ambient perimeter beacons rather than invasive video monitors.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-xl);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: var(--brand-forest); font-weight: 700;">✓</span>
+                            <span>Customizable Home & Neighborhood Safe Zones</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: var(--brand-forest); font-weight: 700;">✓</span>
+                            <span>Emergency Help button instantly dials designated primary caregiver</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: var(--brand-forest); font-weight: 700;">✓</span>
+                            <span>Zero intrusive camera tracking or personal mic eavesdropping</span>
+                        </div>
+                    </div>
+                    <a href="caregiver.html" class="btn btn-primary btn-lg">Explore Safety Settings</a>
+                </div>
+
+                <div class="card" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: var(--space-2xl); text-align: center;">
+                    <div style="position: relative; width: 220px; height: 220px; margin: 0 auto var(--space-xl) auto; border-radius: 50%; background: var(--brand-forest-light); border: 2px dashed var(--brand-forest); display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 140px; height: 140px; border-radius: 50%; background: rgba(30, 61, 47, 0.15); display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: var(--brand-forest); color: #FAF7F2; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 14px rgba(30, 61, 47, 0.3);">
+                                🏡
+                            </div>
+                        </div>
+                        <div style="position: absolute; top: 12px; right: 18px; background: var(--status-success); color: white; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: var(--radius-full);">
+                            ● Safe Zone
+                        </div>
+                    </div>
+                    <h3 class="serif-heading" style="font-size: 1.35rem; margin-bottom: 4px;">Home Sanctuary Active</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--space-md);">
+                        Current radius: 450 meters around 742 Evergreen Terrace.
+                    </p>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="window.showToast('Simulated emergency notification dispatched to Maya Miller.', 'warning')">
+                        Simulate Emergency Alert
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPACT SECTION (THREE PERSPECTIVES) -->
+    <section class="section" id="impact" style="background: var(--bg-primary); border-bottom: 1px solid var(--border-subtle); padding: var(--space-4xl) 0;">
+        <div class="container">
+            <div class="text-center" style="max-width: 720px; margin: 0 auto var(--space-3xl) auto;">
+                <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Meaningful Impact</div>
+                <h2 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.75rem); margin-bottom: var(--space-sm);">
+                    Designed for Everyone in the Circle of Care
+                </h2>
+                <p class="lead-text">
+                    Memory loss touches multiple lives. MindCare is crafted to support each person with compassion and clarity.
+                </p>
+            </div>
+
+            <div class="problem-voices-grid">
+                <div class="card" style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: var(--space-2xl);">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🌿</div>
+                    <h3 class="serif-heading" style="font-size: 1.4rem; margin-bottom: var(--space-xs);">The Individual</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">
+                        Retain autonomy, self-worth, and dignity through calm visual rhythms, favorite photographs, and reassuring voice notes without feeling patronized.
+                    </p>
+                </div>
+
+                <div class="card" style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: var(--space-2xl);">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🤝</div>
+                    <h3 class="serif-heading" style="font-size: 1.4rem; margin-bottom: var(--space-xs);">The Caregiver</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">
+                        Experience deep emotional relief with real-time adherence logs, quiet safe-zone confirmations, and reduced caregiving fatigue.
+                    </p>
+                </div>
+
+                <div class="card" style="background: var(--bg-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-xl); padding: var(--space-2xl);">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-sm);">🏥</div>
+                    <h3 class="serif-heading" style="font-size: 1.4rem; margin-bottom: var(--space-xs);">The Family & Physician</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">
+                        Stay organically connected across miles and share verified daily behavioral insights with healthcare providers to make informed decisions together.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CALL TO ACTION -->
+    <section class="section" id="final-cta" style="background: var(--bg-surface); padding: var(--space-4xl) 0;">
+        <div class="container text-center" style="max-width: 720px;">
+            <div class="eyebrow-tag" style="margin-bottom: var(--space-xs);">Start Today</div>
+            <h2 class="serif-heading" style="font-size: clamp(2.2rem, 4vw, 3.2rem); margin-bottom: var(--space-md);">
+                Small moments.<br>Stronger connections.
+            </h2>
+            <p class="lead-text" style="margin-bottom: var(--space-2xl);">
+                Technology should make care feel simpler, calmer, and more human. Welcome to MindCare.
+            </p>
+            <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+                <a href="assessment.html" class="btn btn-primary btn-lg">Begin Your Journey →</a>
+                <a href="caregiver.html" class="btn btn-secondary btn-lg">Caregiver Portal</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER & EDITORIAL DISCLAIMER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="brand-logo" style="margin-bottom: var(--space-sm); display: inline-flex; align-items: center; gap: 8px;">
+                        <svg viewBox="0 0 32 32" fill="none" style="width: 24px; height: 24px; color: var(--brand-forest);">
+                            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="16" cy="16" r="7" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                        </svg>
+                        <span class="brand-name" style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--text-primary);">MindCare</span>
+                    </a>
+                    <p>Every memory matters. A compassionate platform dedicated to dementia awareness, cognitive stimulation, and family care coordination.</p>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title">Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#memory-orbit">The Orbit</a></li>
+                        <li><a href="#scroll-story">A Day with MindCare</a></li>
+                        <li><a href="assessment.html">Cognitive Check</a></li>
+                        <li><a href="companion.html">AI Companion</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title">Caregivers</h4>
+                    <ul class="footer-links">
+                        <li><a href="caregiver.html">Caregiver Dashboard</a></li>
+                        <li><a href="routine.html">Medication & Routine</a></li>
+                        <li><a href="memory.html">Memory Journal</a></li>
+                        <li><a href="#guided-demo">30-Second Guided Tour</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="footer-col-title">Preferences</h4>
+                    <ul class="footer-links">
+                        <li><button type="button" onclick="document.getElementById('a11yTrigger').click()" style="color: var(--text-secondary); background: none; border: none; cursor: pointer; padding: 0; font-size: 0.88rem;">Accessibility Settings</button></li>
+                        <li><button type="button" class="theme-toggle-btn" style="color: var(--text-secondary); background: none; border: none; cursor: pointer; padding: 0; font-size: 0.88rem;">Toggle Night Garden</button></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-disclaimer-box">
+                <strong>Medical Disclaimer:</strong> MindCare is designed to assist with daily organization, cognitive stimulation, and caregiver coordination. MindCare does not provide clinical diagnoses. Always seek the advice of a qualified physician regarding medical conditions or symptoms.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-xl); font-size: 0.82rem; color: var(--text-muted); flex-wrap: wrap; gap: var(--space-sm);">
+                <span>© 2026 MindCare. All rights reserved.</span>
+                <span>Designed for Dignity, Accessibility & Human Connection.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING ACCESSIBILITY TRIGGER & APPLE SETTINGS PANEL -->
+    <button type="button" class="a11y-widget-trigger" id="a11yTrigger" aria-label="Open Accessibility Menu" aria-expanded="false" title="Accessibility Settings">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="4" r="2"></circle>
+            <path d="M19 13v-2a7 7 0 0 0-14 0v2"></path>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <line x1="8" y1="16" x2="16" y2="16"></line>
+        </svg>
+    </button>
+
+    <div class="a11y-panel" id="a11yPanel" role="dialog" aria-label="Accessibility Options">
+        <div class="a11y-header">
+            <h3 style="font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <span>♿</span> Accessibility Settings
+            </h3>
+            <button type="button" class="btn-icon" id="a11yCloseBtn" aria-label="Close Accessibility Panel" style="width: 28px; height: 28px;">✕</button>
+        </div>
+
+        <div class="a11y-group">
+            <span class="a11y-group-label">Text Size</span>
+            <div class="a11y-btn-group">
+                <button type="button" class="a11y-toggle-btn active" data-font-size="normal">Default</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="large">Large</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="xlarge">X-Large</button>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">High Contrast</strong>
+                    <small class="text-muted">Maximum text clarity</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="contrastToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">Reduce Motion</strong>
+                    <small class="text-muted">Minimize transitions</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="motionToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="a11yResetBtn" style="width: 100%; margin-top: var(--space-xs);">
+            Reset to Defaults
+        </button>
+    </div>
+
+    <!-- MODAL: ADD A MEMORY DIRECTLY FROM LANDING PAGE -->
+    <div class="modal-backdrop" id="addMemoryModal" role="dialog" aria-modal="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="serif-heading" style="font-size: 1.3rem; margin: 0;">Add a Cherished Memory</h3>
+                <button type="button" class="btn-icon" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <form id="landingAddMemoryForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="landingMemTitle">Memory Title</label>
+                        <input type="text" id="landingMemTitle" class="form-input" placeholder="e.g., Summer at Moosehead Lake" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="landingMemPerson">Person / Relationship</label>
+                        <input type="text" id="landingMemPerson" class="form-input" placeholder="e.g., Granddaughter Maya, Arthur">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="landingMemDesc">Story / Spoken Detail</label>
+                        <textarea id="landingMemDesc" class="form-textarea" rows="4" placeholder="Describe the feeling, sunlight, laughter, or sounds of this special memory..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save to Memory Journal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/companion.js"></script>
+</body>
+</html>

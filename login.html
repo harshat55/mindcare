@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — MindCare</title>
+    <meta name="description" content="Sign in to MindCare. Choose your role, enter your name and PIN to continue.">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/translations.js"></script>
+    <style>
+        /* ===== LOGIN PAGE STYLES ===== */
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(circle at 70% 15%, rgba(207, 110, 45, 0.07) 0%, transparent 50%),
+                radial-gradient(circle at 15% 85%, rgba(30, 61, 47, 0.05) 0%, transparent 40%),
+                var(--bg-primary);
+        }
+
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl) var(--space-lg);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 520px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-2xl);
+            position: relative;
+        }
+
+        /* Top accent bar */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--brand-forest), var(--brand-teal), var(--brand-amber));
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        /* Header */
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .login-title {
+            font-family: var(--font-serif);
+            font-size: clamp(1.6rem, 3vw, 2rem);
+            font-weight: 400;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Role cards */
+        .role-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-md);
+            text-align: center;
+        }
+
+        .role-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .role-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: var(--space-lg) var(--space-md);
+            background: var(--bg-card);
+            border: 2px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+            user-select: none;
+            position: relative;
+        }
+
+        .role-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .role-card:focus-visible {
+            outline: 3px solid var(--brand-forest);
+            outline-offset: 2px;
+        }
+
+        .role-card.selected {
+            border-color: var(--brand-forest);
+            background: var(--brand-forest-light);
+            box-shadow: 0 4px 16px rgba(30, 61, 47, 0.15);
+        }
+
+        .role-card-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: var(--radius-md);
+            background: var(--bg-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: background var(--transition-fast);
+        }
+
+        .role-card.selected .role-card-icon {
+            background: var(--brand-forest);
+        }
+
+        .role-card-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .role-card-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Checkmark badge */
+        .role-check {
+            position: absolute;
+            top: 8px; right: 8px;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--brand-forest);
+            color: #fff;
+            font-size: 0.7rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-card.selected .role-check {
+            display: flex;
+        }
+
+        /* Divider */
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        /* Form fields */
+        .login-form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .login-form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .login-form-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1rem;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+            min-height: 50px;
+        }
+
+        .login-form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .login-form-input:focus {
+            border-color: var(--brand-forest);
+            background: var(--bg-surface);
+            box-shadow: 0 0 0 3px rgba(30, 61, 47, 0.12);
+        }
+
+        /* Inline error */
+        .field-error {
+            font-size: 0.82rem;
+            color: var(--status-danger);
+            margin-top: 5px;
+            min-height: 1.1em;
+        }
+
+        /* Global error box */
+        .login-error-box {
+            display: none;
+            background: var(--status-danger-bg);
+            border: 1px solid var(--status-danger);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-md);
+            font-size: 0.88rem;
+            color: var(--status-danger);
+            font-weight: 500;
+        }
+
+        .login-error-box.show {
+            display: block;
+        }
+
+        /* Submit button */
+        .login-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 0.9rem 1.5rem;
+            border-radius: var(--radius-full);
+            background-color: var(--brand-forest);
+            color: #FAF7F2;
+            border: none;
+            cursor: pointer;
+            min-height: 52px;
+            transition: all var(--transition-fast);
+            box-shadow: 0 4px 14px rgba(30, 61, 47, 0.25);
+            margin-top: var(--space-md);
+        }
+
+        .login-btn:hover {
+            background-color: var(--brand-forest-hover);
+            box-shadow: 0 6px 18px rgba(30, 61, 47, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active { transform: scale(0.98); }
+
+        /* Footer note */
+        .login-footer {
+            text-align: center;
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            .login-card { padding: var(--space-xl) var(--space-lg); }
+            .role-cards { grid-template-columns: 1fr; }
+            .role-card {
+                flex-direction: row;
+                text-align: left;
+                padding: var(--space-md);
+            }
+            .role-card-icon { flex-shrink: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+
+        <!-- NAVBAR -->
+        <nav class="navbar" role="navigation" aria-label="Login Navigation">
+            <div class="container navbar-inner">
+                <a href="login.html" class="brand-logo" aria-label="MindCare">
+                    <svg viewBox="0 0 32 32" fill="none" width="28" height="28" style="color: var(--brand-forest);">
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="16" cy="16" r="7" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                    </svg>
+                    <div class="brand-logo-text">
+                        <span class="brand-name" data-i18n="brand.name">MindCare</span>
+                        <span class="brand-tagline" data-i18n="brand.tagline">Every memory matters.</span>
+                    </div>
+                </a>
+                <div class="nav-actions" style="display: flex; align-items: center; gap: var(--space-sm);">
+                    <!-- Multilingual Language Selector -->
+                    <div class="lang-switcher-wrap">
+                        <select class="lang-select" aria-label="Select Language" data-lang-switcher>
+                            <option value="en">English</option>
+                            <option value="hi">हिन्दी (Hindi)</option>
+                            <option value="as">অসমীয়া (Assamese)</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn-icon theme-toggle-btn" aria-label="Toggle theme" title="Toggle theme">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- LOGIN CARD -->
+        <main class="login-wrapper" role="main">
+            <div class="login-card">
+
+                <!-- Header -->
+                <div class="login-header">
+                    <h1 class="login-title" data-i18n="login.title">Welcome to MindCare</h1>
+                    <p class="login-subtitle" data-i18n="login.subtitle">Select your role, then enter your details to continue</p>
+                </div>
+
+                <!-- Global error message -->
+                <div class="login-error-box" id="globalError" role="alert">
+                    Please enter both your name and PIN to continue.
+                </div>
+
+                <!-- ===== LOGIN FORM ===== -->
+                <form id="loginForm" novalidate autocomplete="off">
+
+                    <!-- Step 1: Role selection -->
+                    <span class="role-label" data-i18n="login.role_label">I am a…</span>
+                    <div class="role-cards" role="radiogroup" aria-label="Select your role">
+
+                        <div class="role-card" id="rolePatient" role="radio" tabindex="0"
+                             aria-checked="false" data-role="patient">
+                            <span class="role-check" aria-hidden="true">✓</span>
+                            <div class="role-card-icon" aria-hidden="true">🌿</div>
+                            <div>
+                                <div class="role-card-title" data-i18n="login.role_patient_title">Patient / Companion</div>
+                                <div class="role-card-desc" data-i18n="login.role_patient_desc">Daily routines &amp; gentle support</div>
+                            </div>
+                        </div>
+
+                        <div class="role-card" id="roleCaregiver" role="radio" tabindex="0"
+                             aria-checked="false" data-role="caregiver">
+                            <span class="role-check" aria-hidden="true">✓</span>
+                            <div class="role-card-icon" aria-hidden="true">🩺</div>
+                            <div>
+                                <div class="role-card-title" data-i18n="login.role_caregiver_title">Caregiver</div>
+                                <div class="role-card-desc" data-i18n="login.role_caregiver_desc">Monitor health &amp; safety alerts</div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="field-error" id="roleError"></div>
+
+                    <!-- Step 2: Credentials -->
+                    <div class="login-divider" data-i18n="login.details_divider">Your details</div>
+
+                    <div class="login-form-group">
+                        <label class="login-form-label" for="nameInput" data-i18n="login.name_label">Email / Username</label>
+                        <input
+                            type="text"
+                            id="nameInput"
+                            class="login-form-input"
+                            placeholder="e.g. patient@mindcare.com"
+                            data-i18n-placeholder="login.name_placeholder"
+                            autocomplete="off"
+                            aria-required="true"
+                        >
+                        <div class="field-error" id="nameError"></div>
+                    </div>
+
+                    <div class="login-form-group">
+                        <label class="login-form-label" for="pinInput" data-i18n="login.pin_label">4-Digit PIN</label>
+                        <input
+                            type="password"
+                            id="pinInput"
+                            class="login-form-input"
+                            placeholder="Enter 4-digit PIN"
+                            data-i18n-placeholder="login.pin_placeholder"
+                            inputmode="numeric"
+                            maxlength="4"
+                            autocomplete="off"
+                            aria-required="true"
+                        >
+                        <div class="field-error" id="pinError"></div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" y1="12" x2="3" y2="12"/>
+                        </svg>
+                        <span data-i18n="login.submit_btn">Sign In</span>
+                    </button>
+
+                    <!-- Demo Credentials Helper Note -->
+                    <div style="margin-top: var(--space-md); text-align: center; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; background: var(--bg-subtle); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                        <strong style="color: var(--text-secondary);" data-i18n="login.demo_access_label">Demo Access:</strong> <span data-i18n="login.demo_patient">Patient (patient@mindcare.com / 1234)</span> | <span data-i18n="login.demo_caregiver">Caregiver (caregiver@mindcare.com / 9999)</span>
+                    </div>
+
+                </form>
+
+                <!-- Footer note -->
+                <div class="login-footer" data-i18n="login.footer_note">
+                    Your data stays on this device only. No account needed.
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- ===== SCRIPT ===== -->
+    <script>
+    (function () {
+        'use strict';
+
+        // ---- Demo Credentials ----
+        const DEMO_CREDENTIALS = {
+            patient: {
+                validUsernames: ['patient@mindcare.com', 'patient'],
+                validPin: '1234',
+                errorKey: 'login.error_patient',
+                defaultMsg: 'Invalid Patient Credentials! Demo credentials: patient@mindcare.com / 1234'
+            },
+            caregiver: {
+                validUsernames: ['caregiver@mindcare.com', 'caregiver'],
+                validPin: '9999',
+                errorKey: 'login.error_caregiver',
+                defaultMsg: 'Invalid Caregiver Credentials! Demo credentials: caregiver@mindcare.com / 9999'
+            }
+        };
+
+        // ---- Theme toggle ----
+        const savedTheme = localStorage.getItem('mindcare_theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cur = document.documentElement.getAttribute('data-theme') || 'light';
+                const next = cur === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('mindcare_theme', next);
+            });
+        });
+
+        // ---- Elements ----
+        const roleCards   = document.querySelectorAll('.role-card');
+        const roleError   = document.getElementById('roleError');
+        const nameInput   = document.getElementById('nameInput');
+        const nameError   = document.getElementById('nameError');
+        const pinInput    = document.getElementById('pinInput');
+        const pinError    = document.getElementById('pinError');
+        const globalError = document.getElementById('globalError');
+        const loginForm   = document.getElementById('loginForm');
+
+        let selectedRole = null; // nothing selected by default
+
+        // ---- Role card click — ONLY marks selection, does NOT redirect ----
+        roleCards.forEach(card => {
+            card.addEventListener('click', () => pickRole(card));
+            card.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    pickRole(card);
+                }
+            });
+        });
+
+        function pickRole(card) {
+            // Deselect all
+            roleCards.forEach(c => {
+                c.classList.remove('selected');
+                c.setAttribute('aria-checked', 'false');
+            });
+            // Select clicked card
+            card.classList.add('selected');
+            card.setAttribute('aria-checked', 'true');
+            selectedRole = card.dataset.role;
+
+            // Clear role error if it was showing
+            roleError.textContent = '';
+            globalError.classList.remove('show');
+        }
+
+        // ---- PIN input sanitize & clear errors ----
+        pinInput.addEventListener('input', () => {
+            pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 4);
+            pinError.textContent = '';
+            globalError.classList.remove('show');
+        });
+
+        nameInput.addEventListener('input', () => {
+            nameError.textContent = '';
+            globalError.classList.remove('show');
+        });
+
+        function translateOrFallback(key, fallback) {
+            return (window.MindCareI18n && typeof window.MindCareI18n.t === 'function')
+                ? window.MindCareI18n.t(key, fallback)
+                : fallback;
+        }
+
+        // ---- Form submit — strict demo authentication validation ----
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = nameInput.value.trim().toLowerCase();
+            const pin      = pinInput.value.trim();
+
+            let hasEmpty = false;
+
+            // 1. Role must be selected
+            if (!selectedRole) {
+                roleError.textContent = translateOrFallback('login.error_role', 'Please select a role to continue.');
+                hasEmpty = true;
+            } else {
+                roleError.textContent = '';
+            }
+
+            // 2. Email / Username must not be empty
+            if (username.length === 0) {
+                nameError.textContent = translateOrFallback('login.error_empty', 'Please enter your email or username.');
+                hasEmpty = true;
+            } else {
+                nameError.textContent = '';
+            }
+
+            // 3. PIN must not be empty
+            if (pin.length === 0) {
+                pinError.textContent = translateOrFallback('login.pin_placeholder', 'Please enter your 4-digit PIN.');
+                hasEmpty = true;
+            } else {
+                pinError.textContent = '';
+            }
+
+            // If any required field is missing
+            if (hasEmpty) {
+                globalError.textContent = translateOrFallback('login.error_empty', 'Please enter both fields to continue.');
+                globalError.classList.add('show');
+                return; // block submission
+            }
+
+            // 4. Strict Credential Matching against selected role
+            const roleConfig = DEMO_CREDENTIALS[selectedRole];
+            const isUsernameMatch = roleConfig.validUsernames.includes(username);
+            const isPinMatch = roleConfig.validPin === pin;
+
+            if (!isUsernameMatch || !isPinMatch) {
+                globalError.textContent = translateOrFallback(roleConfig.errorKey, roleConfig.defaultMsg);
+                globalError.classList.add('show');
+                return; // block submission
+            }
+
+            // ---- Valid match: clear errors, save session & redirect ----
+            globalError.classList.remove('show');
+
+            const displayName = nameInput.value.trim();
+            localStorage.setItem('mindcare_logged_in', 'true');
+            localStorage.setItem('mindcare_role',      selectedRole);
+            localStorage.setItem('mindcare_user_name', displayName);
+            localStorage.setItem('mindcare_pin',       pin);
+
+            // Redirect strictly based on verified role
+            if (selectedRole === 'patient') {
+                window.location.href = 'companion.html';
+            } else if (selectedRole === 'caregiver') {
+                window.location.href = 'caregiver.html';
+            }
+        });
+
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "mindcare",
+  "version": "1.0.0",
+  "description": "MindCare — Supportive AI Companion and Caregiver Dashboard for Dementia Care",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "mindcare",
+    "dementia-care",
+    "express",
+    "socket.io",
+    "gemini-ai"
+  ],
+  "author": "MindCare Team",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "dotenv": "^18.0.3",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companion — MindCare</title>
+    <meta name="description" content="Calm, empathetic conversational companion for reminders, routine support, reassurance, and family stories.">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/translations.js"></script>
+    <script>
+        // Auth Guard — redirect to login if no session
+        if (localStorage.getItem('mindcare_logged_in') !== 'true') {
+            window.location.replace('login.html');
+        }
+        // Role guard — patients only
+        if (localStorage.getItem('mindcare_role') === 'caregiver') {
+            window.location.replace('caregiver.html');
+        }
+    </script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" role="navigation" aria-label="Companion Navigation">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo" aria-label="MindCare Home">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px; color: var(--brand-forest);">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="7" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                </svg>
+                <div class="brand-logo-text">
+                    <span class="brand-name" data-i18n="brand.name">MindCare</span>
+                    <span class="brand-tagline" data-i18n="brand.tagline">Every memory matters.</span>
+                </div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="companion.html" class="nav-link active" data-i18n="nav.companion">Companion</a></li>
+                <li><a href="routine.html" class="nav-link" data-i18n="nav.routine">Daily Routine</a></li>
+                <li><a href="memory.html" class="nav-link" data-i18n="nav.memory">Memory Journal</a></li>
+                <li><a href="caregiver.html" class="nav-link" data-i18n="nav.caregiver">Caregiver Portal</a></li>
+            </ul>
+
+            <div class="nav-actions" style="display: flex; align-items: center; gap: var(--space-xs);">
+                <!-- Multilingual Selector -->
+                <div class="lang-switcher-wrap">
+                    <select class="lang-select" aria-label="Select Language" data-lang-switcher>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="as">অসমীয়া (Assamese)</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-icon theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <a href="assessment.html" class="btn btn-primary nav-btn-assessment" data-i18n="nav.assessment">
+                    Cognitive Check
+                </a>
+                <button type="button" class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu" aria-expanded="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="localStorage.clear(); window.location.replace('login.html');" title="Sign out" data-i18n="nav.logout">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div class="mobile-drawer" id="mobileDrawer">
+            <ul class="mobile-nav-list">
+                <li><a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="companion.html" class="mobile-nav-link" data-i18n="nav.companion">Companion</a></li>
+                <li><a href="routine.html" class="mobile-nav-link" data-i18n="nav.routine">Daily Routine</a></li>
+                <li><a href="memory.html" class="mobile-nav-link" data-i18n="nav.memory">Memory Journal</a></li>
+                <li><a href="caregiver.html" class="mobile-nav-link" data-i18n="nav.caregiver">Caregiver Portal</a></li>
+                <li><a href="assessment.html" class="mobile-nav-link" data-i18n="nav.assessment">Cognitive Check</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- COMPANION MAIN AREA (APPLE MESSAGES + SIRI STYLE) -->
+    <main class="companion-layout">
+        <div class="container" style="max-width: 820px;">
+            
+            <!-- Clean Header -->
+            <div style="text-align: center; margin-bottom: var(--space-xl);">
+                <h1 class="serif-heading" style="font-size: clamp(2rem, 3.5vw, 2.6rem); margin-bottom: 4px;" data-i18n="companion.header_title">
+                    Memory Companion
+                </h1>
+                <p class="text-secondary" style="font-size: 1.05rem;" data-i18n="companion.header_subtitle">
+                    A calm conversation space to ask about reminders, view stories, or share a quiet moment.
+                </p>
+            </div>
+
+            <!-- CHAT INTERFACE (iOS MESSAGES STYLE) -->
+            <div class="chat-interactive-box" style="height: 580px;">
+                <div class="chat-header">
+                    <div class="chat-status-indicator">
+                        <span class="status-dot-active voice-status-dot" id="voiceStatusDot"></span>
+                        <span style="font-size: 1rem; font-weight: 600;" data-i18n="companion.assistant_name">MindCare Companion</span>
+                        <span class="badge badge-secondary voice-status-badge" id="voiceStatusBadge" style="font-size: 0.72rem;" data-i18n="companion.status_available">Always Available</span>
+                    </div>
+
+                    <div style="display: flex; gap: var(--space-xs); align-items: center;">
+                        <button type="button" class="btn btn-secondary btn-sm voice-toggle-btn active" id="voiceToggleBtn" title="Toggle Voice Read Aloud" data-i18n="companion.btn_read_aloud">
+                            🔊 Read Aloud
+                        </button>
+                        <button type="button" class="btn btn-sm" id="sosBtn" title="Send SOS alert to caregiver" style="background: var(--status-danger); color: #fff; font-weight: 700; border-radius: var(--radius-full); min-height: 36px; padding: 0.35rem 0.8rem;" data-i18n="companion.btn_sos">
+                            🚨 Emergency Help / SOS
+                        </button>
+                        <button type="button" class="btn-icon clear-chat-btn" title="Restart conversation">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Suggested Prompts (iOS Pills) -->
+                <div class="prompt-chips">
+                    <button type="button" class="chip-btn" data-prompt="What medicines are due today?" data-i18n="prompt.medicines">💊 What medicines are due?</button>
+                    <button type="button" class="chip-btn" data-prompt="Who is Maya?" data-i18n="prompt.maya">❤️ Tell me about Maya</button>
+                    <button type="button" class="chip-btn" data-prompt="What appointments or activities do I have today?" data-i18n="prompt.schedule">📅 Today's schedule</button>
+                    <button type="button" class="chip-btn" data-prompt="I feel a bit confused right now" data-i18n="prompt.confused">🌿 I feel confused / worried</button>
+                    <button type="button" class="chip-btn" data-prompt="Show my favorite memories" data-i18n="prompt.memories">🖼️ Show my memories</button>
+                    <button type="button" class="chip-btn" data-prompt="Can we do a light brain exercise?" data-i18n="prompt.brain">🧠 Light brain activity</button>
+                    <button type="button" class="chip-btn" data-prompt="I need a glass of water please" data-i18n="prompt.water">💧 Need Water</button>
+                </div>
+
+                <!-- Chat Messages Scroll Area -->
+                <div class="chat-messages" id="companionChatMessages">
+                    <div class="chat-bubble chat-bubble-assistant">
+                        <p data-i18n="companion.welcome_msg">Good morning. You have a video call with Maya at 3:30 PM today, and your morning medicine was completed. How can I help right now?</p>
+                        <div class="chat-actions-group">
+                            <a href="routine.html" class="btn btn-secondary btn-sm" data-i18n="companion.btn_check_routine">Check Routine →</a>
+                            <a href="memory.html" class="btn btn-secondary btn-sm" data-i18n="companion.btn_view_photos">View Photos →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- iOS Messages Input Bar -->
+                <div class="chat-input-row">
+                    <input type="text" class="chat-input" id="companionChatInput" placeholder="Message or tap mic to speak..." data-i18n-placeholder="companion.input_placeholder" aria-label="Type or speak message">
+                    <button type="button" class="btn-icon mic-input-btn" id="companionMicBtn" title="Speak to MindCare (Speech-to-Text)" aria-label="Speak to MindCare">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    </button>
+                    <button type="button" class="btn btn-primary chat-send-btn" data-i18n="companion.btn_send">
+                        Send
+                    </button>
+                </div>
+            </div>
+
+            <!-- iOS Widget Cards Below Chat -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-top: var(--space-xl);">
+                <div class="card card-interactive" onclick="window.location.href='routine.html'" style="text-align: center; padding: var(--space-md);">
+                    <div style="font-size: 1.4rem; margin-bottom: 2px;">⏰</div>
+                    <strong style="display: block; font-size: 0.95rem;" data-i18n="nav.routine">Daily Routine</strong>
+                    <small class="text-secondary" data-i18n="companion.card_routine_sub">Medications & tasks</small>
+                </div>
+                <div class="card card-interactive" onclick="window.location.href='memory.html'" style="text-align: center; padding: var(--space-md);">
+                    <div style="font-size: 1.4rem; margin-bottom: 2px;">🖼️</div>
+                    <strong style="display: block; font-size: 0.95rem;" data-i18n="nav.memory">Memory Journal</strong>
+                    <small class="text-secondary" data-i18n="companion.card_memory_sub">Photos & life stories</small>
+                </div>
+                <div class="card card-interactive" onclick="window.location.href='caregiver.html'" style="text-align: center; padding: var(--space-md);">
+                    <div style="font-size: 1.4rem; margin-bottom: 2px;">🛡️</div>
+                    <strong style="display: block; font-size: 0.95rem;" data-i18n="nav.caregiver">Caregiver Portal</strong>
+                    <small class="text-secondary" data-i18n="companion.card_caregiver_sub">Overview & contacts</small>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FLOATING ACCESSIBILITY TRIGGER & PANEL -->
+    <button type="button" class="a11y-widget-trigger" id="a11yTrigger" aria-label="Open Accessibility Menu" aria-expanded="false" title="Accessibility Settings">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="4" r="2"></circle>
+            <path d="M19 13v-2a7 7 0 0 0-14 0v2"></path>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <line x1="8" y1="16" x2="16" y2="16"></line>
+        </svg>
+    </button>
+
+    <div class="a11y-panel" id="a11yPanel" role="dialog" aria-label="Accessibility Options">
+        <div class="a11y-header">
+            <h3 style="font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <span>♿</span> Accessibility Settings
+            </h3>
+            <button type="button" class="btn-icon" id="a11yCloseBtn" aria-label="Close Accessibility Panel" style="width: 28px; height: 28px;">✕</button>
+        </div>
+
+        <div class="a11y-group">
+            <span class="a11y-group-label">Text Size</span>
+            <div class="a11y-btn-group">
+                <button type="button" class="a11y-toggle-btn active" data-font-size="normal">Default</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="large">Large</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="xlarge">X-Large</button>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">High Contrast</strong>
+                    <small class="text-muted">Maximum text clarity</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="contrastToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">Reduce Motion</strong>
+                    <small class="text-muted">Minimize transitions</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="motionToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="a11yResetBtn" style="width: 100%; margin-top: var(--space-xs);">
+            Reset to Defaults
+        </button>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/socket-client.js"></script>
+    <script src="js/companion.js"></script>
+
+    <!-- Socket.io: Patient-side integration for companion page -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize socket as patient role
+        const name = localStorage.getItem('mindcare_user_name') || 'Patient';
+        MindCareSocket.init({ role: 'patient', name });
+
+        // ---- SOS Button ----
+        const sosBtn = document.getElementById('sosBtn');
+        if (sosBtn) {
+            sosBtn.addEventListener('click', () => {
+                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                MindCareSocket.emitEvent({
+                    type: 'sos',
+                    title: '🚨 Emergency SOS Triggered',
+                    message: `${name} pressed the emergency SOS button on the Companion screen. Immediate attention requested.`,
+                    category: 'danger',
+                    time: timeStr
+                });
+                sosBtn.textContent = '✓ SOS Sent';
+                sosBtn.style.opacity = '0.7';
+                setTimeout(() => {
+                    sosBtn.innerHTML = '🚨 SOS';
+                    sosBtn.style.opacity = '1';
+                }, 3000);
+                if (window.showToast) window.showToast('🚨 SOS alert broadcast to Caregiver in real-time!', 'warning');
+            });
+        }
+
+        // ---- Emit alert when patient sends a chat message ----
+        const sendBtn = document.querySelector('.chat-send-btn');
+        const chatInput = document.getElementById('companionChatInput');
+        if (sendBtn && chatInput) {
+            sendBtn.addEventListener('click', () => {
+                const msg = chatInput.value.trim();
+                if (msg) {
+                    MindCareSocket.emitEvent({
+                        type: 'companion_message',
+                        title: '💬 Companion Chat Message',
+                        message: `${name} asked: "${msg.substring(0, 80)}${msg.length > 80 ? '…' : ''}"`,
+                        category: 'info',
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    });
+                }
+            });
+        }
+
+        // ---- Emit alert on suggested prompt chips ----
+        document.querySelectorAll('.chip-btn').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const prompt = chip.getAttribute('data-prompt');
+                MindCareSocket.emitEvent({
+                    type: 'companion_prompt',
+                    title: '💬 Prompt Question Asked',
+                    message: `${name} selected: "${prompt}"`,
+                    category: 'info',
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+            });
+        });
+
+        // Connection status indicator
+        MindCareSocket.on('connected', () => {
+            console.log('[Companion] Socket connected — caregiver will receive alerts');
+        });
+    });
+    </script>
+</body>
+</html>

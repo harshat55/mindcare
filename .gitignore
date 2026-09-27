@@ -1,0 +1,25 @@
+# Node Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment Variables & Secret Keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# SQLite Database & Storage
+backend/mindcare.db
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs & Temporary Data
+logs/
+*.log
+.DS_Store
+Thumbs.db

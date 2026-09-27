@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Routine — MindCare</title>
+    <meta name="description" content="Structured daily routine, medication reminders, and task completion for dementia cognitive support.">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/translations.js"></script>
+    <script>
+        // Auth Guard — redirect to login if no session
+        if (localStorage.getItem('mindcare_logged_in') !== 'true') {
+            window.location.replace('login.html');
+        }
+    </script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" role="navigation" aria-label="Routine Navigation">
+        <div class="container navbar-inner">
+            <a href="index.html" class="brand-logo" aria-label="MindCare Home">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px; color: var(--brand-forest);">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="7" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                </svg>
+                <div class="brand-logo-text">
+                    <span class="brand-name" data-i18n="brand.name">MindCare</span>
+                    <span class="brand-tagline" data-i18n="brand.tagline">Every memory matters.</span>
+                </div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="routine.html" class="nav-link active" data-i18n="nav.routine">Daily Routine</a></li>
+                <li><a href="companion.html" class="nav-link" data-i18n="nav.companion">Companion</a></li>
+                <li><a href="memory.html" class="nav-link" data-i18n="nav.memory">Memory Journal</a></li>
+                <li><a href="caregiver.html" class="nav-link" data-i18n="nav.caregiver">Caregiver Portal</a></li>
+            </ul>
+
+            <div class="nav-actions" style="display: flex; align-items: center; gap: var(--space-xs);">
+                <!-- Multilingual Selector -->
+                <div class="lang-switcher-wrap">
+                    <select class="lang-select" aria-label="Select Language" data-lang-switcher>
+                        <option value="en">English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="as">অসমীয়া (Assamese)</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-icon theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+                <button type="button" class="btn btn-primary nav-btn-assessment" data-modal-target="addRoutineModal" data-i18n="routine.btn_add">
+                    + Add Reminder
+                </button>
+                <button type="button" class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu" aria-expanded="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="localStorage.clear(); window.location.replace('login.html');" title="Sign out" data-i18n="nav.logout">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div class="mobile-drawer" id="mobileDrawer">
+            <ul class="mobile-nav-list">
+                <li><a href="index.html" class="mobile-nav-link" data-i18n="nav.home">Home</a></li>
+                <li><a href="routine.html" class="mobile-nav-link" data-i18n="nav.routine">Daily Routine</a></li>
+                <li><a href="companion.html" class="mobile-nav-link" data-i18n="nav.companion">Companion</a></li>
+                <li><a href="memory.html" class="mobile-nav-link" data-i18n="nav.memory">Memory Journal</a></li>
+                <li><a href="caregiver.html" class="mobile-nav-link" data-i18n="nav.caregiver">Caregiver Portal</a></li>
+                <li><a href="assessment.html" class="mobile-nav-link" data-i18n="nav.assessment">Cognitive Check</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ROUTINE MAIN VIEW (APPLE REMINDERS STYLE) -->
+    <main class="container container-narrow routine-timeline-wrap">
+        
+        <!-- Header & Completion Overview -->
+        <div style="margin-bottom: var(--space-2xl);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-md);">
+                <div>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;" data-i18n="routine.badge">Schedule</span>
+                    <h1 class="serif-heading" style="font-size: 2.2rem; margin-top: 2px;" data-i18n="routine.title">Daily Routine</h1>
+                    <p class="text-secondary" style="font-size: 0.95rem;" data-i18n="routine.subtitle">
+                        Simple, predictable rhythm for medications, meals, and activities.
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <div id="routineProgressPercent" style="font-size: 2.2rem; font-weight: 700; color: var(--brand-primary); line-height: 1;">
+                        63%
+                    </div>
+                    <small id="routineProgressLabel" class="text-muted" style="font-size: 0.82rem; font-weight: 500;">5 of 8 completed</small>
+                </div>
+            </div>
+
+            <!-- Apple-style thin progress bar -->
+            <div class="progress-bar-wrap" style="height: 6px; margin-bottom: var(--space-lg);">
+                <div id="routineProgressBar" class="progress-bar-fill" style="width: 63%;"></div>
+            </div>
+
+            <!-- Category Filter Pills (iOS Segmented Style) -->
+            <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                <button type="button" class="btn btn-sm btn-secondary filter-category-btn active" data-cat="all" data-i18n="routine.filter_all">All</button>
+                <button type="button" class="btn btn-sm btn-secondary filter-category-btn" data-cat="medication" data-i18n="routine.filter_meds">💊 Medications</button>
+                <button type="button" class="btn btn-sm btn-secondary filter-category-btn" data-cat="activity" data-i18n="routine.filter_activity">🌿 Activities</button>
+                <button type="button" class="btn btn-sm btn-secondary filter-category-btn" data-cat="meal" data-i18n="routine.filter_meals">🍲 Meals</button>
+                <button type="button" class="btn btn-sm btn-secondary filter-category-btn" data-cat="social" data-i18n="routine.filter_social">❤️ Social</button>
+            </div>
+        </div>
+
+        <!-- TIMELINE TASK LIST -->
+        <div id="routineTimelineList">
+            <!-- Injected dynamically by JavaScript below -->
+        </div>
+
+        <!-- Need Help Pill -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-2xl); padding: var(--space-lg); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: var(--space-md);">
+            <div>
+                <strong style="font-size: 0.95rem; display: block;" data-i18n="routine.ask_companion_title">Ask MindCare to read reminders</strong>
+                <p class="text-secondary" style="font-size: 0.85rem;" data-i18n="routine.ask_companion_desc">Your Companion can speak your daily reminders aloud whenever needed.</p>
+            </div>
+            <a href="companion.html" class="btn btn-secondary btn-sm" data-i18n="routine.btn_talk_companion">
+                Talk to Companion →
+            </a>
+        </div>
+
+    </main>
+
+    <!-- MODAL: ADD CUSTOM ROUTINE (APPLE SHEET STYLE) -->
+    <div class="modal-backdrop" id="addRoutineModal" role="dialog" aria-modal="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 style="font-size: 1.15rem; font-weight: 600;" data-i18n="routine_modal.title">Add Reminder</h3>
+                <button type="button" class="btn-icon" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <form id="addRoutineForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="taskTitle" data-i18n="routine_modal.label_title">Reminder Title</label>
+                        <input type="text" id="taskTitle" class="form-input" placeholder="e.g., Evening Blood Pressure Tablet" data-i18n-placeholder="routine_modal.placeholder_title" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                        <div class="form-group">
+                            <label class="form-label" for="taskTime" data-i18n="routine_modal.label_time">Time</label>
+                            <input type="text" id="taskTime" class="form-input" placeholder="e.g., 04:00 PM" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="taskCategory" data-i18n="routine_modal.label_category">Category</label>
+                            <select id="taskCategory" class="form-select">
+                                <option value="medication">💊 Medication</option>
+                                <option value="activity">🌿 Activity</option>
+                                <option value="meal">🍲 Meal & Water</option>
+                                <option value="cognitive">🧠 Cognitive Exercise</option>
+                                <option value="social">❤️ Family / Social</option>
+                                <option value="routine">⏰ Routine</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="taskDetails" data-i18n="routine_modal.label_notes">Notes (Optional)</label>
+                        <textarea id="taskDetails" class="form-textarea" rows="2" placeholder="e.g., Take with a full glass of water after dinner" data-i18n-placeholder="routine_modal.placeholder_notes"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" data-close-modal data-i18n="routine_modal.btn_cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="routine_modal.btn_save">Save Reminder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FLOATING ACCESSIBILITY TRIGGER & PANEL -->
+    <button type="button" class="a11y-widget-trigger" id="a11yTrigger" aria-label="Open Accessibility Menu" aria-expanded="false" title="Accessibility Settings">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="4" r="2"></circle>
+            <path d="M19 13v-2a7 7 0 0 0-14 0v2"></path>
+            <line x1="12" y1="12" x2="12" y2="21"></line>
+            <line x1="8" y1="16" x2="16" y2="16"></line>
+        </svg>
+    </button>
+
+    <div class="a11y-panel" id="a11yPanel" role="dialog" aria-label="Accessibility Options">
+        <div class="a11y-header">
+            <h3 style="font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+                <span>♿</span> Accessibility Settings
+            </h3>
+            <button type="button" class="btn-icon" id="a11yCloseBtn" aria-label="Close Accessibility Panel" style="width: 28px; height: 28px;">✕</button>
+        </div>
+
+        <div class="a11y-group">
+            <span class="a11y-group-label">Text Size</span>
+            <div class="a11y-btn-group">
+                <button type="button" class="a11y-toggle-btn active" data-font-size="normal">Default</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="large">Large</button>
+                <button type="button" class="a11y-toggle-btn" data-font-size="xlarge">X-Large</button>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">High Contrast</strong>
+                    <small class="text-muted">Maximum text clarity</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="contrastToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="a11y-group">
+            <div class="toggle-switch-row">
+                <div>
+                    <strong style="display: block; font-size: 0.9rem;">Reduce Motion</strong>
+                    <small class="text-muted">Minimize transitions</small>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="motionToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" id="a11yResetBtn" style="width: 100%; margin-top: var(--space-xs);">
+            Reset to Defaults
+        </button>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/socket-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize socket as patient
+            const name = localStorage.getItem('mindcare_user_name') || 'Patient';
+            MindCareSocket.init({ role: 'patient', name });
+
+            initRoutinePage();
+        });
+
+        window.addEventListener('mindcare:synced', (e) => {
+            if (e.detail && e.detail.type === 'routines') {
+                renderRoutines();
+            }
+        });
+
+        let activeCategory = 'all';
+
+        async function initRoutinePage() {
+            renderRoutines();
+            setupFilterTabs();
+            setupAddRoutineForm();
+
+            // Fetch live routines from backend GET /api/routines
+            if (window.MindCareAPI && typeof window.MindCareAPI.fetchRoutines === 'function') {
+                try {
+                    const serverRoutines = await window.MindCareAPI.fetchRoutines();
+                    if (Array.isArray(serverRoutines) && serverRoutines.length > 0) {
+                        window.MindCareStorage.saveRoutines(serverRoutines);
+                        renderRoutines();
+                    }
+                } catch (err) {
+                    console.warn('[Routine] Live routines fetch fallback:', err.message);
+                }
+            }
+        }
+
+        function renderRoutines() {
+            const list = document.getElementById('routineTimelineList');
+            if (!list || !window.MindCareStorage) return;
+
+            let routines = window.MindCareStorage.getRoutines();
+            
+            // Calculate and update progress
+            const completedCount = routines.filter(r => r.completed).length;
+            const totalCount = routines.length;
+            const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 100;
+
+            const pctEl = document.getElementById('routineProgressPercent');
+            const labelEl = document.getElementById('routineProgressLabel');
+            const barEl = document.getElementById('routineProgressBar');
+
+            if (pctEl) pctEl.textContent = `${pct}%`;
+            if (labelEl) labelEl.textContent = `${completedCount} of ${totalCount} completed`;
+            if (barEl) barEl.style.width = `${pct}%`;
+
+            // Filter if category selected
+            if (activeCategory !== 'all') {
+                routines = routines.filter(r => r.category === activeCategory);
+            }
+
+            if (!routines.length) {
+                list.innerHTML = `
+                    <div class="card" style="text-align: center; padding: var(--space-3xl);">
+                        <p class="text-muted">No scheduled reminders in this category.</p>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="document.querySelector('[data-cat=all]').click()" style="margin-top: var(--space-md);">
+                            Show All
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = routines.map(item => {
+                let catEmoji = '⏰';
+                if (item.category === 'medication') catEmoji = '💊';
+                else if (item.category === 'activity') catEmoji = '🌿';
+                else if (item.category === 'meal') catEmoji = '🍲';
+                else if (item.category === 'cognitive') catEmoji = '🧠';
+                else if (item.category === 'social') catEmoji = '❤️';
+
+                return `
+                    <div class="reminder-row ${item.completed ? 'completed' : ''}" id="routine-${item.id}" data-id="${item.id}">
+                        <div style="display: flex; align-items: center; gap: var(--space-md); flex: 1;">
+                            <button type="button" class="reminder-circle toggle-routine-btn" data-id="${item.id}" aria-label="Toggle completion">
+                                ${item.completed ? '✓' : ''}
+                            </button>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: var(--space-xs); flex-wrap: wrap;">
+                                    <span class="task-time-badge">${item.time}</span>
+                                    <strong class="reminder-title" style="font-size: 0.98rem; font-weight: 600;">${item.title}</strong>
+                                </div>
+                                ${item.details ? `<p class="text-secondary" style="font-size: 0.84rem; margin-top: 2px;">${item.details}</p>` : ''}
+                            </div>
+                        </div>
+
+                        <div style="margin-left: var(--space-md); display: flex; align-items: center; gap: 6px;">
+                            <span class="badge ${item.completed ? 'badge-success' : 'badge-secondary'}" style="font-size: 0.72rem;">
+                                ${item.completed ? 'Completed' : 'Upcoming'}
+                            </span>
+                            <button type="button" class="btn btn-ghost btn-sm toggle-routine-btn" data-id="${item.id}" style="font-size: 0.8rem; padding: 4px 8px;">
+                                ${item.completed ? 'Undo' : 'Complete'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Attach toggle listeners
+            document.querySelectorAll('.toggle-routine-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    handleToggleRoutine(id);
+                });
+            });
+
+            // Allow clicking entire row to toggle
+            document.querySelectorAll('.reminder-row').forEach(row => {
+                row.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) return;
+                    const id = row.getAttribute('data-id');
+                    handleToggleRoutine(id);
+                });
+            });
+        }
+
+        async function handleToggleRoutine(id) {
+            const updated = window.MindCareStorage.toggleRoutine(id);
+            if (updated) {
+                if (window.showToast) {
+                    window.showToast(updated.completed ? `✓ "${updated.title}" completed` : `"${updated.title}" marked pending`, updated.completed ? 'success' : 'info');
+                }
+                renderRoutines();
+
+                // ---- Socket.io: Emit routine alert to caregiver ----
+                const patientName = localStorage.getItem('mindcare_user_name') || 'Patient';
+                const isMed = updated.category === 'medication';
+                const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                MindCareSocket.emitEvent({
+                    type: updated.completed ? (isMed ? 'medicine_taken' : 'task_completed') : 'task_unchecked',
+                    title: updated.completed
+                        ? (isMed ? '💊 Medication Taken by Patient' : '✅ Daily Routine Task Completed')
+                        : '↩️ Routine Task Marked Incomplete',
+                    message: `${patientName} ${updated.completed ? 'completed' : 'unchecked'}: "${updated.title}" (${updated.time})`,
+                    category: updated.completed ? 'success' : 'warning',
+                    time: timeStr,
+                    data: { taskId: id, taskTitle: updated.title, taskTime: updated.time, taskCategory: updated.category }
+                });
+            }
+
+            // Sync with backend PATCH /api/routines/:id/toggle
+            if (window.MindCareAPI && typeof window.MindCareAPI.toggleRoutine === 'function') {
+                try {
+                    await window.MindCareAPI.toggleRoutine(id);
+                } catch (err) {
+                    console.warn('[Routine Toggle] Sync notice:', err.message);
+                }
+            }
+        }
+
+        function setupFilterTabs() {
+            document.querySelectorAll('.filter-category-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-category-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeCategory = btn.getAttribute('data-cat');
+                    renderRoutines();
+                });
+            });
+        }
+
+        function setupAddRoutineForm() {
+            const form = document.getElementById('addRoutineForm');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('taskTitle').value.trim();
+                const time = document.getElementById('taskTime').value.trim();
+                const category = document.getElementById('taskCategory').value;
+                const details = document.getElementById('taskDetails').value.trim();
+
+                if (!title || !time) return;
+
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving...';
+                }
+
+                try {
+                    if (window.MindCareAPI && typeof window.MindCareAPI.createRoutine === 'function') {
+                        const newRoutine = await window.MindCareAPI.createRoutine({
+                            title, time, category, details
+                        });
+                        if (newRoutine) {
+                            const routines = window.MindCareStorage.getRoutines();
+                            // If not already in array, add it
+                            if (!routines.find(r => r.id === newRoutine.id)) {
+                                routines.push(newRoutine);
+                                window.MindCareStorage.saveRoutines(routines);
+                            }
+                        }
+                    } else {
+                        window.MindCareStorage.addRoutine({ title, time, category, details });
+                    }
+
+                    if (window.showToast) {
+                        window.showToast(`"${title}" added to routine`, 'success');
+                    }
+
+                    // ---- Socket.io: Notify caregiver about new reminder ----
+                    const patientName = localStorage.getItem('mindcare_user_name') || 'Patient';
+                    MindCareSocket.emitEvent({
+                        type: 'reminder_added',
+                        title: '📋 New Schedule Reminder Added',
+                        message: `${patientName} added: "${title}" for ${time}`,
+                        category: 'info',
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        data: { title, time, category }
+                    });
+                } catch (err) {
+                    console.warn('[Routine Add] Backend create notice:', err.message);
+                    window.MindCareStorage.addRoutine({ title, time, category, details });
+                    if (window.showToast) {
+                        window.showToast(`"${title}" added to routine (Saved locally)`, 'info');
+                    }
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Save Reminder';
+                    }
+                    form.reset();
+                    window.closeModal('addRoutineModal');
+                    renderRoutines();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
