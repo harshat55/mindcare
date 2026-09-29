@@ -134,7 +134,7 @@ io.on('connection', (socket) => {
 
 // STATIC ASSETS SERVING (Frontend & Subfolders)
 app.use(express.static(path.join(__dirname)));
-app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/js', express.static(path.join(__dirname)));
 app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
