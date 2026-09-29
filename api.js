@@ -5,7 +5,7 @@
  * Provides resilient error handling, loading states, and transparent synchronization with localStorage.
  */
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = '/api';
 
 const MindCareAPI = {
     baseUrl: API_BASE_URL,
