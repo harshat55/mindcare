@@ -1,6 +1,6 @@
 /**
  * MindCare — Production & Development Server (Render / Railway / Local)
- * Express + Socket.io Server listening on dynamic environment port (process.env.PORT || 3000).
+ * Express + Socket.io Server listening on dynamic environment port.
  */
 const express = require('express');
 const http = require('http');
@@ -9,10 +9,8 @@ const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load environment variables
 dotenv.config();
 
-// Initialize Express & HTTP Server with Socket.io
 const app = express();
 const httpServer = http.createServer(app);
 const io = new SocketIO(httpServer, {
@@ -22,48 +20,11 @@ const io = new SocketIO(httpServer, {
     }
 });
 
-// Dynamic Environment Port (Render / Railway default is process.env.PORT, fallback to 3000)
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Initialize Gemini AI (Optional / Empathetic Companion Fallback)
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const geminiApiKey = process.env.GEMINI_API_KEY;
-const isGeminiKeyValid = geminiApiKey &&
-    geminiApiKey !== 'YOUR_GEMINI_API_KEY_HERE' &&
-    !geminiApiKey.includes('PASTE_YOUR_API_KEY');
-
-let genAI = null;
-let geminiModel = null;
-
-const MINDCARE_SYSTEM_PROMPT = `You are MindCare, a gentle, compassionate, and reassuring AI voice companion for an elderly person who may experience memory loss, confusion, or dementia.
-
-Core Personality & Voice Guidelines:
-1. Warm & Calm: Speak like a loving family companion. Use simple, comforting words.
-2. Short & Concise: Answer in only 1 to 3 short sentences. Your words are read aloud to the user through text-to-speech, so keep sentences brief and natural. No bullet points, asterisks, or markdown symbols.
-3. Dementia Safety Anchors:
-   - If the user feels confused, lost, or scared: reassure them softly ("Take a slow breath. You are completely safe in your warm home, and your daughter Sarah is just a phone call away.").
-   - If asked about medications: morning medicine was taken; evening supplements are scheduled for 8:00 PM tonight.
-   - If asked about family: Maya is their beloved granddaughter who graduated with honors and loves baking apple bread with them.
-4. Non-Clinical: Never provide medical diagnosis or arguments. Offer dignity, peace, and quiet confidence.`;
-
-if (isGeminiKeyValid) {
-    try {
-        genAI = new GoogleGenerativeAI(geminiApiKey);
-        geminiModel = genAI.getGenerativeModel({
-            model: 'gemini-1.5-flash',
-            systemInstruction: MINDCARE_SYSTEM_PROMPT
-        });
-        console.log('[Gemini AI] Initialized Google Gemini 1.5 Flash successfully.');
-    } catch (e) {
-        console.warn('[Gemini AI] Initialization notice, using local empathetic fallback:', e.message);
-    }
-} else {
-    console.log('[Gemini AI] Note: GEMINI_API_KEY not set. Using MindCare empathetic companion engine.');
-}
 
 // Routes
 const routinesRouter = require('./backend/routes/routines');
@@ -76,13 +37,12 @@ app.use('/api/memories', memoriesRouter);
 app.use('/api/assessments', assessmentsRouter);
 app.use('/api/caregiver', caregiverRouter);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'online',
         service: 'MindCare API Server',
         timestamp: new Date().toISOString(),
-        geminiConfigured: !!geminiModel,
         port: PORT
     });
 });
@@ -90,26 +50,8 @@ app.get('/api/health', (req, res) => {
 // AI Chat Handler
 async function handleChat(req, res) {
     const userMessage = (req.body && (req.body.message || req.body.prompt || '')).trim();
-    if (!userMessage) {
-        return res.status(400).json({ error: 'Message is required' });
-    }
+    if (!userMessage) return res.status(400).json({ error: 'Message is required' });
 
-    if (geminiModel) {
-        try {
-            const chat = geminiModel.startChat({ history: [] });
-            const result = await chat.sendMessage(userMessage);
-            const responseText = result.response.text();
-            return res.json({
-                reply: responseText,
-                source: 'gemini-1.5-flash',
-                timestamp: new Date().toISOString()
-            });
-        } catch (err) {
-            console.warn('[Gemini API] Request notice, using empathetic fallback:', err.message);
-        }
-    }
-
-    // Local empathetic response engine
     const msg = userMessage.toLowerCase();
     let reply = "I am right here with you. Everything is calm and peaceful.";
     if (msg.includes('medicine') || msg.includes('pill') || msg.includes('dose')) {
@@ -126,19 +68,13 @@ async function handleChat(req, res) {
         reply = "Hello there! It is wonderful to speak with you today. How are you feeling?";
     }
 
-    res.json({
-        reply,
-        source: 'mindcare-companion',
-        timestamp: new Date().toISOString()
-    });
+    res.json({ reply, source: 'mindcare-companion', timestamp: new Date().toISOString() });
 }
 
 app.post('/api/chat', handleChat);
 app.post('/api/companion/chat', handleChat);
 
-// --------------------------------------------------------------------------
-//    SOCKET.IO REAL-TIME COMMUNICATION
-// --------------------------------------------------------------------------
+// Socket.io Real-time
 let connectedPatients = 0;
 let connectedCaregivers = 0;
 
@@ -150,8 +86,6 @@ io.on('connection', (socket) => {
         if (role === 'patient') {
             socket.join('patients');
             connectedPatients++;
-            console.log(`[Socket.io] Patient registered: ${socket.id} (total: ${connectedPatients})`);
-            
             const onlineNotif = {
                 type: 'patient_online',
                 title: '🟢 Patient Connected',
@@ -166,14 +100,12 @@ io.on('connection', (socket) => {
         } else if (role === 'caregiver') {
             socket.join('caregivers');
             connectedCaregivers++;
-            console.log(`[Socket.io] Caregiver registered: ${socket.id} (total: ${connectedCaregivers})`);
         }
         socket.mindcareRole = role;
         socket.mindcareName = data && data.name;
     });
 
     function handlePatientEvent(payload) {
-        console.log(`[Socket.io] patient_event from ${socket.id}:`, payload);
         const notification = {
             type: payload.type || 'general',
             title: payload.title || 'Patient Notification',
@@ -194,35 +126,24 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (socket.mindcareRole === 'patient') {
             connectedPatients = Math.max(0, connectedPatients - 1);
-            const offlineNotif = {
-                type: 'patient_offline',
-                title: '⚪ Patient Disconnected',
-                message: `${socket.mindcareName || 'Patient'} went offline.`,
-                patientName: socket.mindcareName || 'Patient',
-                category: 'warning',
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                timestamp: new Date().toISOString()
-            };
-            io.emit('caretaker_notification', offlineNotif);
-            io.emit('caregiver_notification', offlineNotif);
         } else if (socket.mindcareRole === 'caregiver') {
             connectedCaregivers = Math.max(0, connectedCaregivers - 1);
         }
-        console.log(`[Socket.io] Client disconnected: ${socket.id} (patients: ${connectedPatients}, caregivers: ${connectedCaregivers})`);
     });
 });
 
-// Serve static frontend files from project root
-app.use(express.static(__dirname));
+// STATIC ASSETS SERVING (Frontend & Subfolders)
+app.use(express.static(path.join(__dirname)));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// Start HTTP + WebSocket Server
+// Default root redirect to login.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Start Server
 httpServer.listen(PORT, () => {
-    console.log(`=========================================`);
-    console.log(` MindCare Deployment Server running!`);
-    console.log(` - Port:            ${PORT}`);
-    console.log(` - Base URL:        http://localhost:${PORT}`);
-    console.log(` - Frontend:        http://localhost:${PORT}/login.html`);
-    console.log(` - Socket.io:       ws://localhost:${PORT}`);
-    console.log(` - Gemini Status:   ${geminiModel ? 'Google Gemini 1.5 Flash ACTIVE' : 'Local Empathetic Engine'}`);
-    console.log(`=========================================`);
+    console.log(`MindCare Deployment Server running on port ${PORT}`);
 });
